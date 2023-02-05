@@ -1,0 +1,7 @@
+CREATE USER 'agency_user'@'localhost' IDENTIFIED BY 'agency_pass';
+GRANT CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, SELECT, REFERENCES, RELOAD
+on *.* TO 'agency_user'@'localhost' WITH GRANT OPTION;
+
+FLUSH PRIVILEGES;
+
+CREATE DATABASE IF NOT EXISTS real_estate_agency;
