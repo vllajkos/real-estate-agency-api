@@ -1,0 +1,1 @@
+from .type_of_property_schemas import *
