@@ -1,1 +1,2 @@
 from .type_of_property_repository import TypeOfPropertyRepository
+from .type_of_feature_repository import TypeOfFeatureRepository
