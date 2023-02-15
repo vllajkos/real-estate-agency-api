@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.properties.exceptions import TypeOfFeatureDoesntExistException
-from app.properties.models import TypeOfFeature
+from app.properties.models import TypeOfFeature, TypeOfPropertyHasFeature
 
 
 class TypeOfFeatureRepository:
@@ -28,6 +28,10 @@ class TypeOfFeatureRepository:
 
     def get_by_id(self, feature_id: str):
         return self.db.query(TypeOfFeature).filter(TypeOfFeature.id == feature_id).first()
+
+    def get_features_for_type_of_property_id(self, type_of_property_id: str):
+        return self.db.query(TypeOfFeature).join(TypeOfPropertyHasFeature).filter(
+            TypeOfPropertyHasFeature.type_of_property_id == type_of_property_id).all()
 
     def delete_by_id(self, feature_id: str):
         try:

@@ -1,3 +1,4 @@
 from .type_of_property_services import TypeOfPropertyService
 from .type_of_feature_services import TypeOfFeatureService
 from .type_of_property_has_feature_services import TypeOfPropertyHasFeatureService
+from .property_services import PropertyService

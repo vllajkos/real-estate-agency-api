@@ -32,6 +32,14 @@ class TypeOfPropertyHasFeatureController:
         except TypeOfPropertyDoesntHaveFeaturesException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
 
+    # @staticmethod
+    # def get_features_for_type_of_property(type_id: str):
+    #     try:
+    #         return TypeOfPropertyHasFeatureService.get_features_for_type_of_property_id(type_of_property_id=type_id)
+    #     except TypeOfPropertyDoesntExistException as exc:
+    #         raise HTTPException(status_code=exc.status_code, detail=exc.message)
+    #     except TypeOfPropertyDoesntHaveFeaturesException as exc:
+    #         raise HTTPException(status_code=exc.status_code, detail=exc.message)
     @staticmethod
     def delete(type_id: str, feature_id: str):
         try:
@@ -45,3 +53,7 @@ class TypeOfPropertyHasFeatureController:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def get_nesto(type_id: str):
+        return TypeOfPropertyHasFeatureService.get_nesto(type=type_id)

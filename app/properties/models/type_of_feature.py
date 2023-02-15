@@ -8,7 +8,7 @@ class TypeOfFeature(Base):
     """Modeling a table and a class for types of features."""
     __tablename__ = "types_of_features"
     id = Column(String(36), primary_key=True, default=uuid4)
-    feature = Column(String(60), unique=True)
+    feature = Column(String(60), unique=True, nullable=False)
 
     def __init__(self, feature: str) -> None:
         """Model of a type of feature object"""

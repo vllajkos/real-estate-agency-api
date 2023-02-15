@@ -1,7 +1,8 @@
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
 
-from app.properties.exceptions import TypeOfFeatureExistsException, TypeOfFeatureDoesntExistException
+from app.properties.exceptions import TypeOfFeatureExistsException, TypeOfFeatureDoesntExistException, \
+    TypeOfPropertyDoesntExistException, TypeOfPropertyDoesntHaveFeaturesException
 from app.properties.services import TypeOfFeatureService
 
 
@@ -35,6 +36,15 @@ class TypeOfFeatureController:
         try:
             return TypeOfFeatureService.get_by_id(feature_id=feature_id)
         except TypeOfFeatureDoesntExistException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
+    @staticmethod
+    def get_features_for_type_of_property(type_id: str):
+        try:
+            return TypeOfFeatureService.get_features_for_type_of_property_id(type_of_property_id=type_id)
+        except TypeOfPropertyDoesntExistException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except TypeOfPropertyDoesntHaveFeaturesException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
 
     @staticmethod
