@@ -1,5 +1,5 @@
 from app.db import SessionLocal
-from app.properties.exceptions import TypeOfFeatureExistsException, TypeOfFeatureDoesntExistsException
+from app.properties.exceptions import TypeOfFeatureExistsException, TypeOfFeatureDoesntExistException
 from app.properties.repositories import TypeOfFeatureRepository
 
 
@@ -31,7 +31,7 @@ class TypeOfFeatureService:
             feature_repository = TypeOfFeatureRepository(db=db)
             feature_obj = feature_repository.get_by_feature(feature=feature)
             if feature_obj is None:
-                raise TypeOfFeatureDoesntExistsException
+                raise TypeOfFeatureDoesntExistException
             return feature_obj
 
     @staticmethod
@@ -40,7 +40,7 @@ class TypeOfFeatureService:
             feature_repository = TypeOfFeatureRepository(db=db)
             feature_obj = feature_repository.get_by_id(feature_id=feature_id)
             if feature_obj is None:
-                raise TypeOfFeatureDoesntExistsException
+                raise TypeOfFeatureDoesntExistException
             return feature_obj
 
     @staticmethod

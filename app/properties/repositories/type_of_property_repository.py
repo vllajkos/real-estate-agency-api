@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.properties.exceptions import TypeOfPropertyDoesntExistsException
+from app.properties.exceptions import TypeOfPropertyDoesntExistException
 from app.properties.models import TypeOfProperty
 
 
@@ -32,7 +32,7 @@ class TypeOfPropertyRepository:
         try:
             type_of_property = self.db.query(TypeOfProperty).filter(TypeOfProperty.id == type_id).first()
             if type_of_property is None:
-                raise TypeOfPropertyDoesntExistsException
+                raise TypeOfPropertyDoesntExistException
             self.db.delete(type_of_property)
             self.db.commit()
             return True

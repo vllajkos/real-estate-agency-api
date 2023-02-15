@@ -4,7 +4,7 @@ class TypeOfPropertyExistsException(Exception):
         self.message = message
 
 
-class TypeOfPropertyDoesntExistsException(Exception):
+class TypeOfPropertyDoesntExistException(Exception):
     def __init__(self, status_code=400, message: str = "Type of property with provided information doesn't exist."):
         self.status_code = status_code
         self.message = message

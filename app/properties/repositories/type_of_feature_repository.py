@@ -2,7 +2,7 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.properties.exceptions import TypeOfFeatureDoesntExistsException
+from app.properties.exceptions import TypeOfFeatureDoesntExistException
 from app.properties.models import TypeOfFeature
 
 
@@ -33,7 +33,7 @@ class TypeOfFeatureRepository:
         try:
             feature = self.db.query(TypeOfFeature).filter(TypeOfFeature.id == feature_id).first()
             if feature is None:
-                raise TypeOfFeatureDoesntExistsException
+                raise TypeOfFeatureDoesntExistException
             self.db.delete(feature)
             self.db.commit()
             return True

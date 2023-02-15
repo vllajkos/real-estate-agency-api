@@ -4,7 +4,7 @@ class TypeOfFeatureExistsException(Exception):
         self.message = message
 
 
-class TypeOfFeatureDoesntExistsException(Exception):
+class TypeOfFeatureDoesntExistException(Exception):
     def __init__(self, status_code=400, message: str = "Type of feature with provided information doesn't exist."):
         self.status_code = status_code
         self.message = message

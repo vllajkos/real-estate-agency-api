@@ -1,5 +1,5 @@
 from app.db import SessionLocal
-from app.properties.exceptions import TypeOfPropertyExistsException, TypeOfPropertyDoesntExistsException
+from app.properties.exceptions import TypeOfPropertyExistsException, TypeOfPropertyDoesntExistException
 from app.properties.repositories import TypeOfPropertyRepository
 
 
@@ -31,7 +31,7 @@ class TypeOfPropertyService:
             type_of_property_repository = TypeOfPropertyRepository(db=db)
             property_type = type_of_property_repository.get_by_type_of_property(type_of_property=type_of_property)
             if property_type is None:
-                raise TypeOfPropertyDoesntExistsException
+                raise TypeOfPropertyDoesntExistException
             return property_type
 
     @staticmethod
@@ -40,7 +40,7 @@ class TypeOfPropertyService:
             type_of_property_repository = TypeOfPropertyRepository(db=db)
             property_type = type_of_property_repository.get_by_id(type_id=type_id)
             if property_type is None:
-                raise TypeOfPropertyDoesntExistsException
+                raise TypeOfPropertyDoesntExistException
             return property_type
 
     @staticmethod
