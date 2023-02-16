@@ -17,6 +17,7 @@ class Property(Base):
 
     type_of_property_id = Column(String(36), ForeignKey("types_of_properties.id"))
     type_of_property = relationship("TypeOfProperty", lazy="subquery")
+    features = relationship("PropertyHasFeature", lazy="subquery")
 
     def __init__(self, street: str, municipality: str, city: str, country: str, square_meters: float,
                  type_of_property_id: str) -> None:

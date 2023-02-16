@@ -1,7 +1,7 @@
 from app.db import SessionLocal
 from app.properties.exceptions import TypeOfPropertyHasFeatureExistsException, TypeOfPropertyDoesntExistException, \
     TypeOfFeatureDoesntExistException, TypeOfPropertyDoesntHaveFeaturesException, \
-    TypeOfPropertyDoesntHaveFeatureException
+    TypeOfPropertyDoesntSupportFeatureException
 from app.properties.repositories import TypeOfPropertyHasFeatureRepository, TypeOfPropertyRepository, \
     TypeOfFeatureRepository
 from app.properties.services import TypeOfPropertyService, TypeOfFeatureService
@@ -17,8 +17,8 @@ class TypeOfPropertyHasFeatureService:
                 TypeOfFeatureService.get_by_id(feature_id=feature_id)
                 property_feature_repo = TypeOfPropertyHasFeatureRepository(db)
 
-                if not property_feature_repo.get_property_with_feature_by_ids(type_of_property_id=type_of_property_id,
-                                                                              feature_id=feature_id):
+                if not property_feature_repo.get_type_of_property_and_type_of_feature_by_ids(
+                        type_of_property_id=type_of_property_id, feature_id=feature_id):
                     return property_feature_repo.create(type_of_property_id=type_of_property_id,
                                                         feature_id=feature_id)
                 raise TypeOfPropertyHasFeatureExistsException
@@ -49,15 +49,15 @@ class TypeOfPropertyHasFeatureService:
     #             return features_list
     #         raise TypeOfPropertyDoesntHaveFeaturesException
 
-    # @staticmethod
-    # def get_features_for_type_of_property_id(type_of_property_id: str):
-    #     with SessionLocal() as db:
-    #         TypeOfPropertyService.get_by_id(type_id=type_of_property_id)
-    #         prop_feat_repo = TypeOfPropertyHasFeatureRepository(db)
-    #         features_list = prop_feat_repo.get_features_for_type_of_property_id(type_of_property_id=type_of_property_id)
-    #         if features_list:
-    #             return features_list
-    #         raise TypeOfPropertyDoesntHaveFeaturesException
+    @staticmethod
+    def get_type_of_property_and_type_of_feature_by_ids(type_of_property_id: str, feature_id: str):
+        with SessionLocal() as db:
+            property_feature_repo = TypeOfPropertyHasFeatureRepository(db)
+            property_feature = property_feature_repo.get_type_of_property_and_type_of_feature_by_ids(
+                type_of_property_id=type_of_property_id, feature_id=feature_id)
+            if property_feature:
+                return property_feature
+            raise TypeOfPropertyDoesntSupportFeatureException
 
     @staticmethod
     def delete(type_of_property_id: str, feature_id: str):
@@ -66,9 +66,9 @@ class TypeOfPropertyHasFeatureService:
                 TypeOfPropertyService.get_by_id(type_id=type_of_property_id)
                 TypeOfFeatureService.get_by_id(feature_id=feature_id)
                 property_feature_repo = TypeOfPropertyHasFeatureRepository(db)
-                if property_feature_repo.get_property_with_feature_by_ids(type_of_property_id=type_of_property_id,
-                                                                          feature_id=feature_id):
+                if property_feature_repo.get_type_of_property_and_type_of_feature_by_ids(
+                        type_of_property_id=type_of_property_id, feature_id=feature_id):
                     return property_feature_repo.delete(type_of_property_id=type_of_property_id, feature_id=feature_id)
-                raise TypeOfPropertyDoesntHaveFeatureException
+                raise TypeOfPropertyDoesntSupportFeatureException
         except Exception as exc:
             raise exc

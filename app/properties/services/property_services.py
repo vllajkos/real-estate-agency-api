@@ -1,7 +1,7 @@
 from app.db import SessionLocal
 from app.properties.exceptions import PropertiesNotFoundException, PropertiesNotFoundByMunicipalityException, \
-    PropertiesNotFoundByCityException
-from app.properties.repositories import PropertyRepository, TypeOfPropertyRepository
+    PropertiesNotFoundByCityException, PropertyNotFoundException
+from app.properties.repositories import PropertyRepository
 from app.properties.services import TypeOfPropertyService
 
 
@@ -24,6 +24,18 @@ class PropertyService:
             with SessionLocal() as db:
                 property_repo = PropertyRepository(db=db)
                 return property_repo.get_all()
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_property_by_id(property_id: str):
+        try:
+            with SessionLocal() as db:
+                property_repo = PropertyRepository(db=db)
+                property_ = property_repo.get_property_by_id(property_id=property_id)
+                if property_:
+                    return property_
+                raise PropertyNotFoundException
         except Exception as exc:
             raise exc
 
