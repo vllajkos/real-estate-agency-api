@@ -9,9 +9,9 @@ from app.properties.services import TypeOfFeatureService
 class TypeOfFeatureController:
 
     @staticmethod
-    def create(feature: str):
+    def create(feature: str, optional_values: bool):
         try:
-            return TypeOfFeatureService.create(feature=feature)
+            return TypeOfFeatureService.create(feature=feature, optional_values=optional_values)
         except TypeOfFeatureExistsException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:

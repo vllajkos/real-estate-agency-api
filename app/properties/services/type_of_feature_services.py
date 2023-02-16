@@ -8,16 +8,27 @@ from app.properties.services import TypeOfPropertyService
 class TypeOfFeatureService:
 
     @staticmethod
-    def create(feature: str):
+    def create(feature: str, optional_values: bool):
         try:
             with SessionLocal() as db:
                 feature_repository = TypeOfFeatureRepository(db=db)
                 if feature_repository.get_by_feature(feature=feature):
                     raise TypeOfFeatureExistsException
-                return feature_repository.create(feature=feature)
+                return feature_repository.create(feature=feature, optional_values=optional_values)
         except Exception as exc:
             raise exc
 
+    @staticmethod
+    def get_optional_value_by_feature_id(feature_id: str):
+        try:
+            with SessionLocal() as db:
+                feature_repository = TypeOfFeatureRepository(db=db)
+                feature_obj = feature_repository.get_by_id(feature_id=feature_id)
+                if feature_obj is None:
+                    raise TypeOfFeatureDoesntExistException
+                return feature_repository.get_optional_value_by_feature_id(feature_id=feature_id)
+        except Exception as exc:
+            raise exc
     @staticmethod
     def get_all():
         try:

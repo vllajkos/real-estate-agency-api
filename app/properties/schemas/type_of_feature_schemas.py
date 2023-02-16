@@ -11,6 +11,7 @@ class TypeOfFeatureSchemaOut(BaseModel):
 
 class TypeOfFeatureSchemaIn(BaseModel):
     feature: str
+    optional_values: bool
 
     class Config:
         orm_mode = True

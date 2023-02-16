@@ -1,16 +1,17 @@
 from fastapi import APIRouter
-from pydantic import StrictStr
 
 from app.properties.controller import TypeOfPropertyController, TypeOfFeatureController, \
-    TypeOfPropertyHasFeatureController, PropertyController
+    TypeOfPropertyHasFeatureController, PropertyController, PropertyHasFeatureController
 from app.properties.schemas import TypeOfPropertySchema, TypeOfPropertySchemaIn, TypeOfFeatureSchemaIn, \
-    TypeOfFeatureSchemaOut, TypeOfPropertyHasFeatureSchema, PropertySchemaOut, PropertySchemaIn
+    TypeOfFeatureSchemaOut, TypeOfPropertyHasFeatureSchema, PropertySchemaOut, PropertySchemaIn, \
+    PropertyHasFeatureSchemaIn
 
 type_of_property_router = APIRouter(prefix="/api/type-of-property", tags=["Type of property"])
 type_of_feature_router = APIRouter(prefix="/api/type-of-feature", tags=["Type of feature"])
 type_of_property_has_type_of_feature_router = APIRouter(prefix="/api/type-of-property-has-type-of-feature",
                                                         tags=["Type of property has type of feature"])
 property_router = APIRouter(prefix="/api/property", tags=["Property"])
+property_has_feature_router = APIRouter(prefix="/api/property-has-feature", tags=["Property has feature"])
 
 """Type of property routes"""
 
@@ -45,7 +46,8 @@ def delete_by_id(type_id: str):
 
 @type_of_feature_router.post("/create", response_model=TypeOfFeatureSchemaOut)
 def create_type_of_feature(type_of_feature: TypeOfFeatureSchemaIn):
-    return TypeOfFeatureController.create(type_of_feature.feature)
+    return TypeOfFeatureController.create(feature=type_of_feature.feature,
+                                          optional_values=type_of_feature.optional_values)
 
 
 @type_of_feature_router.get("/get-all-types", response_model=list[TypeOfFeatureSchemaOut])
@@ -115,6 +117,11 @@ def get_all_properties():
     return PropertyController.get_all()
 
 
+@property_router.get("/get-property-by-id/{property_id}", response_model=PropertySchemaOut)
+def get_property_by_id(property_id: str):
+    return PropertyController.get_property_by_id(property_id=property_id)
+
+
 @property_router.get("/get-all-properties-for-type", response_model=list[PropertySchemaOut])
 def get_all_properties_for_type_of_property_id(type_of_property_id: str):
     return PropertyController.get_all_properties_for_type_id(type_of_property_id=type_of_property_id)
@@ -133,3 +140,13 @@ def get_all_properties_by_city(city: str):
 @property_router.delete("/delete", response_model=None)
 def delete_property_by_id(property_id: str):
     return PropertyController.delete(property_id=property_id)
+
+
+"""Property has feature"""
+
+
+@property_has_feature_router.post("/create-property-has-feature", response_model=PropertyHasFeatureSchemaIn)
+def create_property_has_feature(property_feature: PropertyHasFeatureSchemaIn):
+    return PropertyHasFeatureController.create(property_id=property_feature.property_id,
+                                               feature_id=property_feature.feature_id,
+                                               additional_feature_value=property_feature.additional_feature_value)

@@ -26,6 +26,15 @@ class PropertyController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
+    def get_property_by_id(property_id: str):
+        try:
+            return PropertyService.get_property_by_id(property_id=property_id)
+        except PropertyNotFoundException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
     def get_all_properties_for_type_id(type_of_property_id: str):
         try:
             properties = PropertyService.get_all_properties_for_type_id(type_of_property_id=type_of_property_id)

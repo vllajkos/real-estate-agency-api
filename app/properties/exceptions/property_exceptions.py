@@ -1,22 +1,21 @@
-class PropertiesNotFoundException(Exception):
-    def __init__(self, status_code=200, message: str = "There are no properties of chosen type of property."):
-        self.status_code = status_code
-        self.message = message
+from app.properties.exceptions.custom_property_exception import CustomPropertyException
 
 
-class PropertiesNotFoundByMunicipalityException(Exception):
-    def __init__(self, status_code=200, message: str = "There are no properties for chosen municipality."):
-        self.status_code = status_code
-        self.message = message
+class PropertiesNotFoundException(CustomPropertyException):
+    status_code = 200
+    message = "There are no properties of chosen type of property."
 
 
-class PropertiesNotFoundByCityException(Exception):
-    def __init__(self, status_code=200, message: str = "There are no properties for chosen city."):
-        self.status_code = status_code
-        self.message = message
+class PropertiesNotFoundByMunicipalityException(CustomPropertyException):
+    status_code = 200
+    message = "There are no properties for chosen municipality."
 
 
-class PropertyNotFoundException(Exception):
-    def __init__(self, status_code=400, message: str = "There is no property for provided id."):
-        self.status_code = status_code
-        self.message = message
+class PropertiesNotFoundByCityException(CustomPropertyException):
+    status_code = 200
+    message = "There are no properties for chosen city."
+
+
+class PropertyNotFoundException(CustomPropertyException):
+    status_code = 401
+    message: str = "There is no property for provided id."

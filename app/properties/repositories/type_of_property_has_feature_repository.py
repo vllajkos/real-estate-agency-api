@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.properties.exceptions import TypeOfPropertyDoesntHaveFeatureException
+from app.properties.exceptions import TypeOfPropertyDoesntSupportFeatureException
 from app.properties.models import TypeOfPropertyHasFeature, TypeOfFeature
 
 
@@ -24,7 +24,7 @@ class TypeOfPropertyHasFeatureRepository:
         return self.db.query(TypeOfPropertyHasFeature).filter(
             TypeOfPropertyHasFeature.type_of_property_id == type_of_property_id).all()
 
-    def get_property_with_feature_by_ids(self, type_of_property_id: str, feature_id: str):
+    def get_type_of_property_and_type_of_feature_by_ids(self, type_of_property_id: str, feature_id: str):
         return self.db.query(TypeOfPropertyHasFeature).filter(
             (TypeOfPropertyHasFeature.type_of_property_id == type_of_property_id) &
             (TypeOfPropertyHasFeature.feature_id == feature_id)).first()
@@ -35,12 +35,12 @@ class TypeOfPropertyHasFeatureRepository:
 
     def delete(self, type_of_property_id: str, feature_id: str):
         try:
-            property_with_feature = self.get_property_with_feature_by_ids(type_of_property_id=type_of_property_id,
-                                                                          feature_id=feature_id)
-            if property_with_feature:
-                self.db.delete(property_with_feature)
+            prop_feature = self.get_type_of_property_and_type_of_feature_by_ids(type_of_property_id=type_of_property_id,
+                                                                                feature_id=feature_id)
+            if prop_feature:
+                self.db.delete(prop_feature)
                 self.db.commit()
                 return True
-            raise TypeOfPropertyDoesntHaveFeatureException
+            raise TypeOfPropertyDoesntSupportFeatureException
         except Exception as exc:
             raise exc

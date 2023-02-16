@@ -24,6 +24,9 @@ class PropertyRepository:
     def get_all(self):
         return self.db.query(Property).all()
 
+    def get_property_by_id(self, property_id: str):
+        return self.db.query(Property).filter(Property.id == property_id).first()
+
     def get_all_properties_for_type_id(self, type_of_property_id: str):
         return self.db.query(Property).filter(Property.type_of_property_id == type_of_property_id).all()
 
