@@ -1,10 +1,16 @@
-class TypeOfFeatureExistsException(Exception):
-    def __init__(self, status_code=400, message: str = "Type of feature already exists."):
-        self.status_code = status_code
-        self.message = message
+from app.properties.exceptions.custom_property_exception import CustomPropertyException
 
 
-class TypeOfFeatureDoesntExistException(Exception):
-    def __init__(self, status_code=400, message: str = "Type of feature with provided information doesn't exist."):
-        self.status_code = status_code
-        self.message = message
+class TypeOfFeatureExistsException(CustomPropertyException):
+    status_code = 400
+    message = "Type of feature already exists."
+
+
+class TypeOfFeatureDoesntExistException(CustomPropertyException):
+    status_code = 400
+    message = "Type of feature with provided information doesn't exist."
+
+
+class TypeOfFeatureDoesntSupportAdditionalValueException(CustomPropertyException):
+    status_code = 400
+    message = "Type of feature doesn't support additional value parameters."
