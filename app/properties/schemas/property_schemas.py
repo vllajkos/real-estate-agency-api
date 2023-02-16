@@ -12,7 +12,7 @@ class PropertySchemaOut(BaseModel):
     city: str
     country: str
     square_meters: float
-    type_of_property_id: str
+    # type_of_property_id: str
     type_of_property: TypeOfPropertySchema
     features: list[PropertyHasFeatureSchemaOut]
 

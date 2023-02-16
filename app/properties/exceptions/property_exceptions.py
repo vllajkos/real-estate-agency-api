@@ -17,5 +17,5 @@ class PropertiesNotFoundByCityException(CustomPropertyException):
 
 
 class PropertyNotFoundException(CustomPropertyException):
-    status_code = 401
+    status_code = 400
     message: str = "There is no property for provided id."

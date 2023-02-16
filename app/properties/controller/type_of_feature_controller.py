@@ -51,7 +51,7 @@ class TypeOfFeatureController:
     def delete_by_id(feature_id: str):
         try:
             TypeOfFeatureService.delete_by_id(feature_id=feature_id)
-            return JSONResponse(status_code=200, content="Type of Feature deleted")
+            return JSONResponse(status_code=200, content="Type of feature deleted")
         except TypeOfFeatureDoesntExistException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:

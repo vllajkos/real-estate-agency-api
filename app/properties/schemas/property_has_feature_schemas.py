@@ -13,7 +13,6 @@ class PropertyHasFeatureSchemaIn(BaseModel):
 
 
 class PropertyHasFeatureSchemaOut(BaseModel):
-    property_id: str
     feature_id: str
     additional_feature_value: Optional[PositiveInt]
 

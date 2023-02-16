@@ -4,7 +4,7 @@ from app.properties.controller import TypeOfPropertyController, TypeOfFeatureCon
     TypeOfPropertyHasFeatureController, PropertyController, PropertyHasFeatureController
 from app.properties.schemas import TypeOfPropertySchema, TypeOfPropertySchemaIn, TypeOfFeatureSchemaIn, \
     TypeOfFeatureSchemaOut, TypeOfPropertyHasFeatureSchema, PropertySchemaOut, PropertySchemaIn, \
-    PropertyHasFeatureSchemaIn
+    PropertyHasFeatureSchemaIn, PropertyHasFeatureSchemaOut
 
 type_of_property_router = APIRouter(prefix="/api/type-of-property", tags=["Type of property"])
 type_of_feature_router = APIRouter(prefix="/api/type-of-feature", tags=["Type of feature"])
@@ -145,8 +145,20 @@ def delete_property_by_id(property_id: str):
 """Property has feature"""
 
 
-@property_has_feature_router.post("/create-property-has-feature", response_model=PropertyHasFeatureSchemaIn)
+@property_has_feature_router.post("/create-property-has-feature", response_model=PropertyHasFeatureSchemaOut)
 def create_property_has_feature(property_feature: PropertyHasFeatureSchemaIn):
     return PropertyHasFeatureController.create(property_id=property_feature.property_id,
                                                feature_id=property_feature.feature_id,
                                                additional_feature_value=property_feature.additional_feature_value)
+
+
+@property_has_feature_router.get("/get-all-features-for-property-by-id/{property_id}",
+                                 response_model=list[PropertyHasFeatureSchemaOut])
+def get_all_features_for_property_by_id(property_id: str):
+    return PropertyHasFeatureController.get_all_features_for_property_by_id(property_id=property_id)
+
+
+@property_has_feature_router.delete("/delete-feature-from-property-by-ids", response_model=None)
+def delete_feature_from_property_by_ids(property_id: str, feature_id: str):
+    return PropertyHasFeatureController.delete_feature_from_property_by_ids(property_id=property_id,
+                                                                            feature_id=feature_id)

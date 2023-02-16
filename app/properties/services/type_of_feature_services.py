@@ -1,7 +1,7 @@
 from app.db import SessionLocal
 from app.properties.exceptions import TypeOfFeatureExistsException, TypeOfFeatureDoesntExistException, \
     TypeOfPropertyDoesntHaveFeaturesException
-from app.properties.repositories import TypeOfFeatureRepository, TypeOfPropertyHasFeatureRepository
+from app.properties.repositories import TypeOfFeatureRepository
 from app.properties.services import TypeOfPropertyService
 
 

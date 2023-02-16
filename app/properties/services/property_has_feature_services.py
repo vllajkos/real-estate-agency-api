@@ -1,6 +1,7 @@
 from app.db import SessionLocal
 from app.properties.exceptions import PropertyAlreadyHasThatFeatureException, \
-    TypeOfFeatureDoesntSupportAdditionalValueException
+    TypeOfFeatureDoesntSupportAdditionalValueException, PropertyDoesntHaveFeaturesException, \
+    PropertyDoesntHaveRequestedFeatureException
 from app.properties.repositories import PropertyHasFeatureRepository
 from app.properties.services import TypeOfFeatureService, PropertyService
 from app.properties.services import TypeOfPropertyHasFeatureService as CheckFeatureSupport
@@ -10,6 +11,8 @@ class PropertyHasFeatureService:
 
     @staticmethod
     def create(property_id: str, feature_id: str, additional_feature_value: int):
+        """ This method creates a bond between concrete property created by user and features available for that
+        concrete type of property which user can add to his property if feature is supported by type of property """
         try:
             with SessionLocal() as db:
                 # this checks if property_id exists in database
@@ -28,5 +31,33 @@ class PropertyHasFeatureService:
                     raise PropertyAlreadyHasThatFeatureException
                 return property_feature.create(property_id=property_id, feature_id=feature_id,
                                                additional_feature_value=additional_feature_value)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_all_features_for_property_by_id(property_id: str):
+        try:
+            with SessionLocal() as db:
+                PropertyService.get_property_by_id(property_id=property_id)
+                property_feature_repo = PropertyHasFeatureRepository(db)
+                features = property_feature_repo.get_all_features_for_property_by_id(property_id=property_id)
+                if features:
+                    return features
+                raise PropertyDoesntHaveFeaturesException
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def delete_feature_from_property_by_ids(property_id: str, feature_id: str):
+        try:
+            with SessionLocal() as db:
+                PropertyService.get_property_by_id(property_id=property_id)
+                TypeOfFeatureService.get_by_id(feature_id=feature_id)
+                property_feature_repo = PropertyHasFeatureRepository(db)
+                if property_feature_repo.get_property_with_feature_by_ids(property_id=property_id,
+                                                                          feature_id=feature_id):
+                    return property_feature_repo.delete_feature_from_property_by_ids(property_id=property_id,
+                                                                                     feature_id=feature_id)
+                raise PropertyDoesntHaveRequestedFeatureException
         except Exception as exc:
             raise exc

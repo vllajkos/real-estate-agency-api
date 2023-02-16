@@ -38,7 +38,8 @@ class TypeOfPropertyHasFeatureController:
     def delete(type_id: str, feature_id: str):
         try:
             TypeOfPropertyHasFeatureService.delete(type_of_property_id=type_id, feature_id=feature_id)
-            return JSONResponse(status_code=200, content="Type of property with feature deleted")
+            return JSONResponse(status_code=200, content=f"Feature with id {feature_id} removed "
+                                                         f"from type of property id {type_id}")
         except CustomPropertyException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
