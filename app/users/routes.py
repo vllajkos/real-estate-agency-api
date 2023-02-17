@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.users.controller import UserController
-from app.users.schemas import UserSchemaIn, UserSchemaOut
+from app.users.schemas import UserSchemaIn, UserSchemaOut, UserSchemaLogin
 
 user_router = APIRouter(prefix="/api/user", tags=["User"])
 
@@ -34,3 +34,8 @@ def delete_user_by_id(user_id: str):
 @user_router.put("/update/active-status", response_model=UserSchemaOut)
 def update_user_active_status(user_id: str, active_status: bool):
     return UserController.update_user_active_status(user_id=user_id, active_status=active_status)
+
+
+@user_router.post("/login")
+def login_user(user: UserSchemaLogin):
+    return UserController.login_user(username_or_email=user.username_or_email, password=user.password)

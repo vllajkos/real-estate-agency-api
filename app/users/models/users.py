@@ -10,9 +10,9 @@ from app.db import Base
 class User(Base):
     """Defining a table for users"""
     __tablename__ = "users"
-    id = Column(String(50), primary_key=True, default=uuid4)
-    username = Column(String(30), unique=True, nullable=False)
-    email = Column(String(50), unique=True, nullable=False)
+    id = Column(String(36), primary_key=True, default=uuid4)
+    username = Column(String(40), unique=True, nullable=False)
+    email = Column(String(60), unique=True, nullable=False)
     password = Column(String(64),  nullable=False)
     active_status = Column(Boolean, default=True)
     superuser = Column(Boolean, default=False)

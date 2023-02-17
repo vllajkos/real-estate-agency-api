@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
 from app.users.exceptions import CustomUserException
-from app.users.services import UserService
+from app.users.services import UserService, signJWT
 
 
 class UserController:
@@ -58,14 +58,14 @@ class UserController:
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
-    # @staticmethod
-    # def login_user(username_or_email: str, password: str):
-    #     try:
-    #         user = UserService.login_user(username_or_email=username_or_email, password=password)
-    #         if user.superuser:
-    #             return signJWT(user.id, "superuser")
-    #         return signJWT(user.id, "classic_user")
-    #     except CustomUserException as exc:
-    #         raise HTTPException(status_code=exc.status_code, detail=exc.message)
-    #     except Exception as exc:
-    #         raise HTTPException(status_code=500, detail=exc.__str__())
+    @staticmethod
+    def login_user(username_or_email: str, password: str):
+        try:
+            user = UserService.login_user(username_or_email=username_or_email, password=password)
+            if user.superuser:
+                return signJWT(user.id, "superuser")
+            return signJWT(user.id, "user")
+        except CustomUserException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())

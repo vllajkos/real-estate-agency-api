@@ -1,3 +1,4 @@
+from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -36,7 +37,8 @@ class UserRepository:
         return self.db.query(User).filter(User.email == email).first()
 
     def get_by_username_or_email(self, username_or_email: str):
-        return self.db.query(User).filter(User.email == username_or_email or User.username == username_or_email).first()
+        return self.db.query(User).filter(or_(User.email == username_or_email,
+                                              User.username == username_or_email)).first()
 
     def get_user_by_id(self, user_id: str):
         return self.db.query(User).filter(User.id == user_id).first()
@@ -67,4 +69,3 @@ class UserRepository:
             raise UserIdDoesntExistException
         except Exception as exc:
             raise exc
-
