@@ -28,8 +28,7 @@ class PropertyHasFeatureRepository:
                                                         (PropertyHasFeature.feature_id == feature_id)).first()
 
     def get_all_features_for_property_by_id(self, property_id: str):
-        return self.db.query(PropertyHasFeature).filter(
-            PropertyHasFeature.property_id == property_id).all()
+        return self.db.query(PropertyHasFeature).filter(PropertyHasFeature.property_id == property_id).all()
 
     #
     # def get_property_with_feature_by_ids(self, type_of_property_id: str, feature_id: str):

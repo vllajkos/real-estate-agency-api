@@ -23,7 +23,6 @@ class TypeOfFeatureRepository:
     def get_optional_value_by_feature_id(self, feature_id: str):
         return self.db.query(TypeOfFeature.optional_values).filter(TypeOfFeature.id == feature_id).first()
 
-
     def get_by_feature(self, feature: str):
         return self.db.query(TypeOfFeature).filter(TypeOfFeature.feature == feature).first()
 
