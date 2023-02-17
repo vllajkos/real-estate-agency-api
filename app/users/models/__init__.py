@@ -1,3 +1,3 @@
-from .users import User
-from .clients import Client
-from .employees import Employee
+from .user import User
+from .client import Client
+from .employee import Employee

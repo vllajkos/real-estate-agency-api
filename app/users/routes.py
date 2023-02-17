@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from app.users.controller import UserController
-from app.users.schemas import UserSchemaIn, UserSchemaOut, UserSchemaLogin
+from app.users.controller import UserController, ClientController, EmployeeController
+from app.users.schemas import UserSchemaIn, UserSchemaOut, UserSchemaLogin, ClientSchemaOut, ClientSchemaIn, \
+    EmployeeSchemaIn, EmployeeSchemaOut
 
 user_router = APIRouter(prefix="/api/user", tags=["User"])
 
@@ -39,3 +40,22 @@ def update_user_active_status(user_id: str, active_status: bool):
 @user_router.post("/login")
 def login_user(user: UserSchemaLogin):
     return UserController.login_user(username_or_email=user.username_or_email, password=user.password)
+
+
+client_router = APIRouter(prefix="/api/client", tags=["Client"])
+
+
+@client_router.post("/create-client", response_model=ClientSchemaOut)
+def create_client(client: ClientSchemaIn):
+    return ClientController.create_client(first_name=client.first_name, last_name=client.last_name,
+                                          phone_number=client.phone_number, user_id=client.user_id)
+
+
+employee_router = APIRouter(prefix="/api/employee", tags=["Employee"])
+
+
+@employee_router.post("/create-employee", response_model=EmployeeSchemaOut)
+def create_employee(employee: EmployeeSchemaIn):
+    return EmployeeController.create_employee(first_name=employee.first_name, last_name=employee.last_name,
+                                              job_title=employee.job_title, phone_number=employee.phone_number,
+                                              user_id=employee.user_id)
