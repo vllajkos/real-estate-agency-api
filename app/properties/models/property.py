@@ -15,7 +15,7 @@ class Property(Base):
     country = Column(String(100), nullable=False)
     square_meters = Column(Float, nullable=False)
 
-    type_of_property_id = Column(String(36), ForeignKey("types_of_properties.id"))
+    type_of_property_id = Column(String(36), ForeignKey("types_of_properties.id"), nullable=False)
     type_of_property = relationship("TypeOfProperty", lazy="subquery")
     features = relationship("PropertyHasFeature", lazy="subquery")
 

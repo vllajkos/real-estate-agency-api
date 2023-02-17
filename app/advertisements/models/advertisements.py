@@ -1,31 +1,56 @@
 """Model of an Advertisement"""
+from datetime import date
+from uuid import uuid4
 
-from pydantic import UUID4
-from sqlalchemy import Column, String, Enum, Float, ForeignKey
+from sqlalchemy import Column, String, Float, ForeignKey, Date, Text
+from sqlalchemy.orm import relationship
 
 from app.db import Base
-import enum
+from enum import Enum
 
 
-class TypeOfAd(enum.Enum):
+class TypeOfAd(Enum):
     """Types of ads"""
-    SALE = "for sale"
-    RENT = "for rent"
+    SALE = "sale"
+    RENT = "rent"
 
 
-class Advetisement(Base):
+class AdStatus(Enum):
+    """Advertisement status"""
+    ACTIVE = "active"
+    PENDING = "pending"
+    CANCELED = "canceled"
+    REJECTED = "rejected"
+    EXPIRED = "expired"
+    FINALIZED = "finalized"
+
+
+class Advertisement(Base):
     """Defining a table for advertisements"""
     __tablename__ = "advertisements"
-    id = Column(String(50), primary_key=True, default=UUID4)
-    type_of_ad = Column(Enum(TypeOfAd), nullable=False)
+    id = Column(String(50), primary_key=True, default=uuid4)
+    type_of_ad = Column(String(20), nullable=False)
+    start_date = Column(Date, default=date.today())
     price = Column(Float, nullable=False)
-    description = Column(String(500))
+    description = Column(Text)
+    status = Column(String(40), default=AdStatus.PENDING.value)
 
-    ad_request_id = Column(String(50), ForeignKey("ad_requests.id"), nullable=False)
+    property_id = Column(String(36), ForeignKey("properties.id"), nullable=False)
+    client_id = Column(String(36), ForeignKey("clients.id"), nullable=False)
+    employee_id = Column(String(36), ForeignKey("employees.id"), nullable=False)
 
-    def __init__(self, type_of_ad: TypeOfAd, price: float, description: str, ad_request_id: UUID4):
+    property = relationship("Property", lazy="subquery")
+    client = relationship("Client", lazy="subquery")
+
+    def __init__(self, type_of_ad: str, price: float, description: str, property_id: str,
+                 client_id: str, employee_id: str, start_date: date = date.today(),
+                 status: AdStatus = AdStatus.PENDING.value):
         """Model of an Advertisement object"""
         self.type_of_ad = type_of_ad
         self.price = price
         self.description = description
-        self.ad_request_id = ad_request_id
+        self.property_id = property_id
+        self.client_id = client_id
+        self.employee_id = employee_id
+        self.start_date = start_date
+        self.status = status

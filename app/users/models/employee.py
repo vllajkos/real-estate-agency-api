@@ -15,7 +15,7 @@ class Employee(Base):
     job_title = Column(String(30))
     phone_number = Column(String(50))
 
-    user_id = Column(String(36), ForeignKey("users.id"))
+    user_id = Column(String(36), ForeignKey("users.id"), unique=True)
     user = relationship("User", lazy='subquery')
 
     def __init__(self, first_name: str, last_name: str, job_title: str, phone_number: str, user_id: str):

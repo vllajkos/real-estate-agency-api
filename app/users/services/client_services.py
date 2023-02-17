@@ -1,6 +1,6 @@
 import hashlib
 from app.db.database import SessionLocal
-from app.users.exceptions import ClientExistWithProvidedUserIdException
+from app.users.exceptions import ClientExistWithProvidedUserIdException, ClientIdDoesntExistException
 # from app.clients.exceptions import InvalidClientnameException, InvalidEmailException, ClientIdDoesntExistException, \
 #     InvalidPasswordException, InvalidLoginInfoException
 
@@ -38,14 +38,14 @@ class ClientService:
     #         except Exception as exc:
     #             raise exc
     #
-    # @staticmethod
-    # def get_client_by_id(client_id: str):
-    #     with SessionLocal() as db:
-    #         client_repository = ClientRepository(db)
-    #         client = client_repository.get_client_by_id(client_id=client_id)
-    #         if client:
-    #             return client
-    #         raise ClientIdDoesntExistException
+    @staticmethod
+    def get_client_by_id(client_id: str):
+        with SessionLocal() as db:
+            client_repository = ClientRepository(db)
+            client = client_repository.get_client_by_id(client_id=client_id)
+            if client:
+                return client
+            raise ClientIdDoesntExistException
     #
     # @staticmethod
     # def get_all_clients():

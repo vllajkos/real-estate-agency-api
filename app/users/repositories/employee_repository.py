@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -22,3 +23,6 @@ class EmployeeRepository:
 
     def get_employee_by_user_id(self, user_id: str):
         return self.db.query(Employee).filter(Employee.user_id == user_id).first()
+
+    def get_random_employee(self):
+        return self.db.query(Employee).order_by(func.random()).first()

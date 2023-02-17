@@ -25,8 +25,8 @@ class ClientRepository:
     # def get_by_name(self, first_name: str, last_name: str):
     #     return self.db.query(Client).filter((Client.first_name == first_name) & (Client.last_name == last_name)).all()
     #
-    # def get_client_by_id(self, client_id: str):
-    #     return self.db.query(Client).filter(Client.id == client_id).first()
+    def get_client_by_id(self, client_id: str):
+        return self.db.query(Client).filter(Client.id == client_id).first()
     #
     # def get_all_clients(self):
     #     return self.db.query(Client).all()
