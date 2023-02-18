@@ -59,3 +59,14 @@ class AdvertisementService:
                     type_of_ad=type_of_ad, type_of_property_id=type_of_property_id)
         except Exception as exc:
             raise exc
+
+    @staticmethod
+    def get_all_by_ad_and_property_types_and_city(type_of_ad: str, type_of_property_id: str, city: str):
+        try:
+            with SessionLocal() as db:
+                ad_repository = AdvertisementRepository(db)
+                return ad_repository.get_all_by_ad_and_property_types_and_city(type_of_ad=type_of_ad,
+                                                                               type_of_property_id=type_of_property_id,
+                                                                               city=city)
+        except Exception as exc:
+            raise exc

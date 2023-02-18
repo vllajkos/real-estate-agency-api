@@ -23,20 +23,25 @@ class AdvertisementRepository:
             raise exc
 
     def get_advertisements_by_property_id(self, property_id: str):
-        return self.db.query(Advertisement).filter(Advertisement.property_id == property_id).all()
+        # I used options(joined load) to load property object to advertisement in a single query rather than access them
+        # separately
+        return self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)).\
+            filter(Advertisement.property_id == property_id).all()
 
     def get_all_active_ads(self):
-        return self.db.query(Advertisement).filter(Advertisement.status == AdStatus.ACTIVE.value).all()
+        return self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)).\
+            filter(Advertisement.status == AdStatus.ACTIVE.value).all()
 
     def get_all_active_ads_by_type_of_ad(self, type_of_ad: str):
-        return self.db.query(Advertisement).filter((Advertisement.type_of_ad == type_of_ad) &
-                                                   (Advertisement.status == AdStatus.ACTIVE.value)).all()
+        return self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)).\
+            filter((Advertisement.type_of_ad == type_of_ad) & (Advertisement.status == AdStatus.ACTIVE.value)).all()
 
     def get_all_active_ads_by_type_of_ad_and_type_of_property_id(self, type_of_ad: str, type_of_property_id: str):
-        # used options(joined load) to load property object to advertisement in a single query rather than access them
-        # separately
-        return self.db.query(Advertisement).join(Property). \
-            options(joinedload(Advertisement.property)). \
-            filter((Advertisement.type_of_ad == type_of_ad) &
-                   (Property.type_of_property_id == type_of_property_id) &
+        return self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)). \
+            filter((Advertisement.type_of_ad == type_of_ad) & (Property.type_of_property_id == type_of_property_id) &
                    (Advertisement.status == AdStatus.ACTIVE.value)).all()
+
+    def get_all_by_ad_and_property_types_and_city(self, type_of_ad: str, type_of_property_id: str, city: str):
+        return self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)).\
+            filter((Advertisement.type_of_ad == type_of_ad) & (Property.type_of_property_id == type_of_property_id) &
+                   (Property.city == city) & (Advertisement.status == AdStatus.ACTIVE.value)).all()

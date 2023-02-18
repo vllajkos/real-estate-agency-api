@@ -40,3 +40,11 @@ def get_all_active_ads_by_type_of_ad(type_of_ad: TypeOfAd):
 def get_all_active_ads_by_type_of_ad_and_type_of_property_id(type_of_ad: TypeOfAd, type_of_property_id: str):
     return AdvertisementController.get_all_active_ads_by_type_of_ad_and_type_of_property_id(
         type_of_ad=type_of_ad.value, type_of_property_id=type_of_property_id)
+
+
+@advertisement_router.get("/get-all-by-ad-and-property-types-and-city", response_model=list[AdvertisementSchemaOut])
+def get_all_by_ad_and_property_types_and_city(type_of_ad: TypeOfAd, type_of_property_id: str, city: str):
+    return AdvertisementController.get_all_by_ad_and_property_types_and_city(type_of_ad=type_of_ad.value,
+                                                                             type_of_property_id=type_of_property_id,
+                                                                             city=city)
+

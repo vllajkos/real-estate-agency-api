@@ -46,3 +46,10 @@ class AdvertisementController:
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
+    @staticmethod
+    def get_all_by_ad_and_property_types_and_city(type_of_ad: Any, type_of_property_id: str, city: str):
+        try:
+            return AdvertisementService.get_all_by_ad_and_property_types_and_city(
+                type_of_ad=type_of_ad, type_of_property_id=type_of_property_id, city=city)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())

@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import PositiveInt, BaseModel
 
+from app.properties.schemas import TypeOfFeatureSchemaOut
+
 
 class PropertyHasFeatureSchemaIn(BaseModel):
     property_id: str
@@ -13,7 +15,7 @@ class PropertyHasFeatureSchemaIn(BaseModel):
 
 
 class PropertyHasFeatureSchemaOut(BaseModel):
-    feature_id: str
+    feature: TypeOfFeatureSchemaOut
     additional_feature_value: Optional[PositiveInt]
 
     class Config:
