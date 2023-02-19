@@ -25,6 +25,24 @@ class AdvertisementController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
+    def get_all_od_pending_for_employee_id(employee_id: str):
+        try:
+            return AdvertisementService.get_all_od_pending_for_employee_id(employee_id=employee_id)
+        except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def get_active_advertisement_by_id(advertisement_id: str):
+        try:
+            return AdvertisementService.get_active_advertisement_by_id(advertisement_id=advertisement_id)
+        except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
     def get_all_active_ads():
         try:
             return AdvertisementService.get_all_active_ads()
@@ -32,9 +50,9 @@ class AdvertisementController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
-    def get_all_active_ads_by_type_of_ad(type_of_ad: Any):
+    def get_all_active_ads_by_type_of_ad_sorted(type_of_ad: Any, sort_: Any):
         try:
-            return AdvertisementService.get_all_active_ads_by_type_of_ad(type_of_ad=type_of_ad)
+            return AdvertisementService.get_all_active_ads_by_type_of_ad_sorted(type_of_ad=type_of_ad, sort_=sort_)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
@@ -51,5 +69,53 @@ class AdvertisementController:
         try:
             return AdvertisementService.get_all_by_ad_and_property_types_and_city(
                 type_of_ad=type_of_ad, type_of_property_id=type_of_property_id, city=city)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def get_by_filter_parameters(type_of_ad: str, min_price: float, max_price: float,
+                                 municipality: str, city: str, country: str, min_square_meters: float,
+                                 max_square_meters: float, type_of_property_id: str, feature_id_list: list[str]):
+        try:
+            return AdvertisementService.get_by_filter_parameters(type_of_ad=type_of_ad,
+                                                                 min_price=min_price,
+                                                                 max_price=max_price,
+                                                                 municipality=municipality,
+                                                                 city=city, country=country,
+                                                                 min_square_meters=min_square_meters,
+                                                                 max_square_meters=max_square_meters,
+                                                                 type_of_property_id=type_of_property_id,
+                                                                 feature_id_list=feature_id_list)
+        except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except CustomPropertyException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def update_ad_status(advertisement_id: str, status: Any):
+        try:
+            return AdvertisementService.update_status(advertisement_id=advertisement_id, status=status)
+        except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def update_ad_status_to_expired():
+        try:
+            return AdvertisementService.update_ad_status_to_expired()
+        except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def update_pending_status(advertisement_id: str, status: Any):
+        try:
+            return AdvertisementService.update_pending_status(advertisement_id=advertisement_id, status=status)
+        except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())

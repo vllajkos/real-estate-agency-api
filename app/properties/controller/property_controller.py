@@ -2,7 +2,8 @@ from fastapi import HTTPException
 from starlette.responses import JSONResponse
 
 from app.properties.exceptions import TypeOfPropertyDoesntExistException, PropertiesNotFoundException, \
-    PropertiesNotFoundByMunicipalityException, PropertiesNotFoundByCityException, PropertyNotFoundException
+    PropertiesNotFoundByMunicipalityException, PropertiesNotFoundByCityException, PropertyNotFoundException, \
+    CustomPropertyException
 from app.properties.services import PropertyService
 
 
@@ -59,6 +60,21 @@ class PropertyController:
         try:
             return PropertyService.get_all_properties_by_city(city=city)
         except PropertiesNotFoundByCityException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def get_properties_by_filter_parameters(municipality: str, city: str, country: str,
+                                            min_square_meters: float, max_square_meters: float,
+                                            type_of_property_id: str):
+        try:
+            return PropertyService.get_properties_by_filter_parameters(municipality=municipality,
+                                                                       city=city, country=country,
+                                                                       min_square_meters=min_square_meters,
+                                                                       max_square_meters=max_square_meters,
+                                                                       type_of_property_id=type_of_property_id)
+        except CustomPropertyException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())

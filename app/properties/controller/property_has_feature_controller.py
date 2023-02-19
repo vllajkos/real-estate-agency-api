@@ -9,7 +9,7 @@ from app.properties.services import PropertyHasFeatureService
 class PropertyHasFeatureController:
 
     @staticmethod
-    def create(property_id: str, feature_id: str, additional_feature_value: int):
+    def create(property_id: str, feature_id: str, additional_feature_value: int = None):
         try:
             return PropertyHasFeatureService.create(property_id=property_id, feature_id=feature_id,
                                                     additional_feature_value=additional_feature_value)

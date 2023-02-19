@@ -5,10 +5,19 @@ from pydantic import PositiveInt, BaseModel
 from app.properties.schemas import TypeOfFeatureSchemaOut
 
 
-class PropertyHasFeatureSchemaIn(BaseModel):
+class PropertyHasFeatureSchemaWithADIn(BaseModel):
     property_id: str
     feature_id: str
-    additional_feature_value: Optional[PositiveInt]
+    additional_feature_value: PositiveInt
+
+    class Config:
+        orm_mode = True
+
+
+class PropertyHasFeatureSchemaWithoutAVIn(BaseModel):
+    property_id: str
+    feature_id: str
+
 
     class Config:
         orm_mode = True

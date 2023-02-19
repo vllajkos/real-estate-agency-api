@@ -1,6 +1,6 @@
 from app.db import SessionLocal
 from app.properties.exceptions import PropertiesNotFoundException, PropertiesNotFoundByMunicipalityException, \
-    PropertiesNotFoundByCityException, PropertyNotFoundException
+    PropertiesNotFoundByCityException, PropertyNotFoundException, PropertiesNotFoundByFilterParametersException
 from app.properties.repositories import PropertyRepository
 from app.properties.services import TypeOfPropertyService
 
@@ -72,6 +72,42 @@ class PropertyService:
                 if properties:
                     return properties
                 raise PropertiesNotFoundByCityException
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_properties_by_filter_parameters(municipality: str, city: str, country: str,
+                                            min_square_meters: float, max_square_meters: float,
+                                            type_of_property_id: str):
+        try:
+            with SessionLocal() as db:
+                property_repo = PropertyRepository(db)
+                prop_ids = property_repo.get_properties_by_filter_parameters(municipality=municipality,
+                                                                             city=city, country=country,
+                                                                             min_square_meters=min_square_meters,
+                                                                             max_square_meters=max_square_meters,
+                                                                             type_of_property_id=type_of_property_id)
+                if prop_ids:
+                    return prop_ids
+                raise PropertiesNotFoundByFilterParametersException
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_properties_ids_by_filter_parameters(municipality: str, city: str, country: str,
+                                                min_square_meters: float, max_square_meters: float,
+                                                type_of_property_id: str):
+        try:
+            with SessionLocal() as db:
+                property_repo = PropertyRepository(db)
+                pr_ids = property_repo.get_properties_ids_by_filter_parameters(municipality=municipality,
+                                                                               city=city, country=country,
+                                                                               min_square_meters=min_square_meters,
+                                                                               max_square_meters=max_square_meters,
+                                                                               type_of_property_id=type_of_property_id)
+                if pr_ids:
+                    return pr_ids
+                raise PropertiesNotFoundByFilterParametersException
         except Exception as exc:
             raise exc
 

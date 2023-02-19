@@ -1,7 +1,7 @@
 from app.db import SessionLocal
 from app.properties.exceptions import PropertyAlreadyHasThatFeatureException, \
     TypeOfFeatureDoesntSupportAdditionalValueException, PropertyDoesntHaveFeaturesException, \
-    PropertyDoesntHaveRequestedFeatureException
+    PropertyDoesntHaveRequestedFeatureException, PropertiesNotFoundByFilterParametersException
 from app.properties.repositories import PropertyHasFeatureRepository
 from app.properties.services import TypeOfFeatureService, PropertyService
 from app.properties.services import TypeOfPropertyHasFeatureService as CheckFeatureSupport
@@ -44,6 +44,21 @@ class PropertyHasFeatureService:
                 if features:
                     return features
                 raise PropertyDoesntHaveFeaturesException
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_properties_ids_by_filter_parameters(features_id_list: list[str]):
+        # this is used in advertisement search only
+        # returns a list of ids of properties having needed features
+        try:
+            with SessionLocal() as db:
+                property_feature_repo = PropertyHasFeatureRepository(db)
+                properties_ids = property_feature_repo.get_properties_ids_by_filter_parameters(
+                    features_id_list=features_id_list)
+                if properties_ids:
+                    return properties_ids
+                raise PropertiesNotFoundByFilterParametersException
         except Exception as exc:
             raise exc
 

@@ -15,3 +15,12 @@ class TypeOfFeatureSchemaIn(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class TypeOfFeatureSchema(BaseModel):
+    id: UUID4
+    feature: str
+    optional_values: bool
+
+    class Config:
+        orm_mode = True

@@ -30,7 +30,13 @@ class PropertyHasFeatureRepository:
     def get_all_features_for_property_by_id(self, property_id: str):
         return self.db.query(PropertyHasFeature).filter(PropertyHasFeature.property_id == property_id).all()
 
-    #
+    def get_properties_ids_by_filter_parameters(self, features_id_list: list[str]) -> list:
+        # returns filtered property's ids by filter parameters as single element tuple list
+        return self.db.query(PropertyHasFeature.property_id).filter(
+            PropertyHasFeature.feature_id.in_(features_id_list)).all()
+
+
+
     # def get_property_with_feature_by_ids(self, type_of_property_id: str, feature_id: str):
     #     return self.db.query(TypeOfPropertyHasFeature).filter(
     #         (TypeOfPropertyHasFeature.type_of_property_id == type_of_property_id) &

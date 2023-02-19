@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.properties.exceptions import PropertyNotFoundException
+from app.properties.exceptions import PropertyNotFoundException, MinMaxSquareMetersException
 from app.properties.models import Property
 
 
@@ -35,6 +35,54 @@ class PropertyRepository:
 
     def get_all_properties_by_city(self, city: str):
         return self.db.query(Property).filter(Property.city.ilike(f"%{city}%")).all()
+
+    def get_properties_by_filter_parameters(self, municipality: str, city: str, country: str,
+                                            min_square_meters: float, max_square_meters: float,
+                                            type_of_property_id: str):
+        # returns for all none variables filtered properties by filter parameters
+        query = self.db.query(Property)
+        if municipality:
+            query = query.filter(Property.municipality == municipality)
+        if city:
+            query = query.filter(Property.city.ilike(city))
+        if country:
+            query = query.filter(Property.country == country)
+
+        if min_square_meters and max_square_meters:
+            if min_square_meters > max_square_meters:
+                raise MinMaxSquareMetersException
+            query = query.filter(Property.square_meters.between(min_square_meters, max_square_meters))
+        elif min_square_meters:
+            query = query.filter(Property.square_meters > min_square_meters)
+        elif max_square_meters:
+            query = query.filter(Property.square_meters < max_square_meters)
+        if type_of_property_id:
+            query = query.filter(Property.type_of_property_id == type_of_property_id)
+        return query.all()
+
+    def get_properties_ids_by_filter_parameters(self, municipality: str, city: str, country: str,
+                                                min_square_meters: float, max_square_meters: float,
+                                                type_of_property_id: str) -> list:
+        # returns for all none variables filtered property's ids by filter parameters as single tuple list
+        query = self.db.query(Property.id)
+        if municipality:
+            query = query.filter(Property.municipality == municipality)
+        if city:
+            query = query.filter(Property.city == city)
+        if country:
+            query = query.filter(Property.country == country)
+
+        if min_square_meters and max_square_meters:
+            if min_square_meters > max_square_meters:
+                raise MinMaxSquareMetersException
+            query = query.filter(Property.square_meters.between(min_square_meters, max_square_meters))
+        elif min_square_meters:
+            query = query.filter(Property.square_meters > min_square_meters)
+        elif max_square_meters:
+            query = query.filter(Property.square_meters < max_square_meters)
+        if type_of_property_id:
+            query = query.filter(Property.type_of_property_id == type_of_property_id)
+        return query.all()
 
     def delete(self, property_id: str):
         try:

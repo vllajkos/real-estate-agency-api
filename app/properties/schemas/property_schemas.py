@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, UUID4
 
 from app.properties.models import TypeOfProperty
@@ -27,6 +29,18 @@ class PropertySchemaIn(BaseModel):
     country: str
     square_meters: float
     type_of_property_id: str
+
+    class Config:
+        orm_mode = True
+
+
+class PropertySchemaFilter(BaseModel):
+    municipality: Optional[str]
+    city: Optional[str]
+    country: Optional[str]
+    min_square_meters: Optional[float]
+    max_square_meters: Optional[float]
+    type_of_property_id: Optional[str]
 
     class Config:
         orm_mode = True

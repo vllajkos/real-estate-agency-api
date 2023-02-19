@@ -5,24 +5,8 @@ from uuid import uuid4
 from sqlalchemy import Column, String, Float, ForeignKey, Date, Text
 from sqlalchemy.orm import relationship
 
+from app.advertisements.models.hardcoded_data import AdStatus
 from app.db import Base
-from enum import Enum
-
-
-class TypeOfAd(Enum):
-    """Types of ads"""
-    SALE = "sale"
-    RENT = "rent"
-
-
-class AdStatus(Enum):
-    """Advertisement status"""
-    ACTIVE = "active"
-    PENDING = "pending"
-    CANCELED = "canceled"
-    REJECTED = "rejected"
-    EXPIRED = "expired"
-    FINALIZED = "finalized"
 
 
 class Advertisement(Base):
@@ -30,7 +14,8 @@ class Advertisement(Base):
     __tablename__ = "advertisements"
     id = Column(String(50), primary_key=True, default=uuid4)
     type_of_ad = Column(String(20), nullable=False)
-    start_date = Column(Date, default=date.today())
+    admission_date = Column(Date, default=date.today())
+    start_date = Column(Date, default=None)
     price = Column(Float, nullable=False)
     description = Column(Text)
     status = Column(String(40), default=AdStatus.PENDING.value)
@@ -43,7 +28,7 @@ class Advertisement(Base):
     client = relationship("Client", lazy="subquery")
 
     def __init__(self, type_of_ad: str, price: float, description: str, property_id: str,
-                 client_id: str, employee_id: str, start_date: date = date.today(),
+                 client_id: str, employee_id: str, admission_date: date = date.today(), start_date: date = None,
                  status: AdStatus = AdStatus.PENDING.value):
         """Model of an Advertisement object"""
         self.type_of_ad = type_of_ad
@@ -52,5 +37,6 @@ class Advertisement(Base):
         self.property_id = property_id
         self.client_id = client_id
         self.employee_id = employee_id
+        self.admission_date = admission_date
         self.start_date = start_date
         self.status = status

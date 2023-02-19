@@ -1,8 +1,9 @@
-from app.advertisements.exceptions import TypeOfAdExistsForPropertyException
-from app.advertisements.models.advertisements import AdStatus, TypeOfAd
+from app.advertisements.exceptions import TypeOfAdExistsForPropertyException, AdNotFoundByFilteredParametersException, \
+    NoPendingAdsException
+from app.advertisements.models.hardcoded_data import TypeOfAd, AdStatus
 from app.advertisements.repository import AdvertisementRepository
 from app.db import SessionLocal
-from app.properties.services import PropertyService
+from app.properties.services import PropertyService, PropertyHasFeatureService
 from app.users.services import ClientService, EmployeeService
 
 
@@ -33,6 +34,27 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
+    def get_all_od_pending_for_employee_id(employee_id: str):
+        try:
+            with SessionLocal() as db:
+                ad_repository = AdvertisementRepository(db)
+                ads = ad_repository.get_all_on_pending_for_employee_id(employee_id=employee_id)
+                if ads:
+                    return ads
+                raise NoPendingAdsException
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_active_advertisement_by_id(advertisement_id: str):
+        try:
+            with SessionLocal() as db:
+                ad_repository = AdvertisementRepository(db)
+                return ad_repository.get_active_advertisement_by_id(advertisement_id=advertisement_id)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
     def get_all_active_ads():
         try:
             with SessionLocal() as db:
@@ -42,11 +64,11 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_all_active_ads_by_type_of_ad(type_of_ad: str):
+    def get_all_active_ads_by_type_of_ad_sorted(type_of_ad: str, sort_: str):
         try:
             with SessionLocal() as db:
                 ad_repository = AdvertisementRepository(db)
-                return ad_repository.get_all_active_ads_by_type_of_ad(type_of_ad=type_of_ad)
+                return ad_repository.get_all_active_ads_by_type_of_ad_sorted(type_of_ad=type_of_ad, sort_=sort_)
         except Exception as exc:
             raise exc
 
@@ -68,5 +90,68 @@ class AdvertisementService:
                 return ad_repository.get_all_by_ad_and_property_types_and_city(type_of_ad=type_of_ad,
                                                                                type_of_property_id=type_of_property_id,
                                                                                city=city)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_by_filter_parameters(type_of_ad: str, min_price: float, max_price: float,
+                                 municipality: str, city: str, country: str, min_square_meters: float,
+                                 max_square_meters: float, type_of_property_id: str, feature_id_list: list[str]):
+        try:
+            with SessionLocal() as db:
+                # returns found property ids if they satisfy search parameters or raises an exception if non found
+                properties_1 = PropertyService.get_properties_ids_by_filter_parameters(
+                    municipality=municipality, city=city, country=country, min_square_meters=min_square_meters,
+                    max_square_meters=max_square_meters, type_of_property_id=type_of_property_id)
+                # if there are provided features to search for
+                properties_2 = []
+                if feature_id_list:
+                    # returns found property ids if they satisfy search parameters or raises an exception if non found
+                    properties_2 = PropertyHasFeatureService.get_properties_ids_by_filter_parameters(
+                        features_id_list=feature_id_list)
+                # intersection of properties_1 and properties_2 are ids found which satisfy both conditions
+                # since they are a single tuples ,id_tuple[0] is id and here I make a list of properties ids
+                if properties_2:
+                    properties = [id_tuple[0] for id_tuple in list(set(properties_1).intersection(set(properties_2)))]
+                    if properties:
+                        ad_repository = AdvertisementRepository(db)
+                        return ad_repository.get_active_advertisements_by_property_id_and_type_of_ad_and_price(
+                            min_price=min_price, max_price=max_price, type_of_ad=type_of_ad,
+                            properties_ids_list=properties)
+                    raise AdNotFoundByFilteredParametersException
+                else:
+                    # if properties_2 is empty
+                    properties = [id_tuple[0] for id_tuple in properties_1]
+                    ad_repository = AdvertisementRepository(db)
+                    return ad_repository.get_active_advertisements_by_property_id_and_type_of_ad_and_price(
+                        min_price=min_price, max_price=max_price, type_of_ad=type_of_ad,
+                        properties_ids_list=properties)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def update_status(advertisement_id: str, status: str):
+        try:
+            with SessionLocal() as db:
+                ad_repo = AdvertisementRepository(db)
+                return ad_repo.update_ad_status(advertisement_id=advertisement_id, status=status)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def update_ad_status_to_expired():
+        try:
+            with SessionLocal() as db:
+                ad_repo = AdvertisementRepository(db)
+                return ad_repo.update_ad_status_to_expired()
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def update_pending_status(advertisement_id: str, status: str):
+        try:
+            with SessionLocal() as db:
+                ad_repo = AdvertisementRepository(db)
+                return ad_repo.update_pending_status(advertisement_id=advertisement_id, status=status)
         except Exception as exc:
             raise exc

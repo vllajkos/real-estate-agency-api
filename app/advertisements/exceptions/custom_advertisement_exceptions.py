@@ -8,3 +8,37 @@ class TypeOfAdExistsForPropertyException(CustomAdvertisementExceptions):
     message = "The property you are interested in advertising is currently listed " \
               "in our ads for the selected advertisement type and remains valid. " \
               "If you wish you can choose another type of advertisement for given property"
+
+
+class AdNotFoundByFilteredParametersException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Advertisements not found for filter parameters"
+
+
+class MinMaxPriceException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Min price cannot be greater than max price"
+
+
+class AdvertisementNoLongerActiveException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Advertisement is no longer active or is still pending approval."
+
+
+class AdvertisementIdDoesntExistException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Advertisement id doesn't exist."
+
+
+class NoExpiredAdsException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "No expired ads."
+
+
+class AdNotPendingException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Ad not pending approval."
+
+class NoPendingAdsException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "No pending ads for you"
