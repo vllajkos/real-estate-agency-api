@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.advertisements.exceptions import MinMaxPriceException, AdvertisementNoLongerActiveException, \
     AdvertisementIdDoesntExistException, NoExpiredAdsException, AdNotPendingException, EnterValidStartEndDateException
 from app.advertisements.models import Advertisement
-from app.advertisements.models.hardcoded_data import EXPIRES_IN_DAYS, TypeOfAd, AdStatus, SortByPrice, STATS_PERIOD
+from app.advertisements.models.hardcoded_data import EXPIRES_IN_DAYS, AdStatus, SortByPrice
 from app.properties.models import Property
 
 

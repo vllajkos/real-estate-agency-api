@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import Any
 
 from app.advertisements.exceptions import TypeOfAdExistsForPropertyException, AdNotFoundByFilteredParametersException, \
     NoPendingAdsException, EnterValidDateFormatException
@@ -36,7 +37,7 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_all_od_pending_for_employee_id(employee_id: str):
+    def get_all_on_pending_for_employee_id(employee_id: str):
         try:
             with SessionLocal() as db:
                 ad_repository = AdvertisementRepository(db)
@@ -213,7 +214,8 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_stats(type_of_ad: str, type_of_property_id: str, city: str, start_date: str, end_date: str):
+    def get_stats(type_of_ad: Any, type_of_property_id: str, city: str, start_date: str, end_date: str):
+        type_of_ad = None if type_of_ad is None else type_of_ad.value
         try:
             start_date = None if start_date is None else datetime.strptime(start_date, "%Y-%m-%d")
             end_date = None if end_date is None else datetime.strptime(end_date, "%Y-%m-%d")

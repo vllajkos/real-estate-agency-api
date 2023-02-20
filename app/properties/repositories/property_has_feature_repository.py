@@ -41,22 +41,22 @@ class PropertyHasFeatureRepository:
         properties_ids_dict = {}
         property_ids_list = []
         # for feature operator value in list
-        for feature_operator_value in features_id_operator_value_list:
+        for feature_id, operator, value in features_id_operator_value_list:
             # if operator is > returns list of all property ids who fills the requirements
-            if feature_operator_value[1] == MoreLessEqual.MORE.value:
+            if operator == MoreLessEqual.MORE.value:
                 property_ids_list = self.db.query(PropertyHasFeature.property_id).filter(
-                    (PropertyHasFeature.feature_id == feature_operator_value[0]) &
-                    (PropertyHasFeature.additional_feature_value > feature_operator_value[2])).all()
+                    (PropertyHasFeature.feature_id == feature_id) &
+                    (PropertyHasFeature.additional_feature_value > value)).all()
             # if operator is < returns list of all property ids who fills the requirements
-            elif feature_operator_value[1] == MoreLessEqual.LESS.value:
+            elif operator == MoreLessEqual.LESS.value:
                 property_ids_list = self.db.query(PropertyHasFeature.property_id).filter(
-                    (PropertyHasFeature.feature_id == feature_operator_value[0]) &
-                    (PropertyHasFeature.additional_feature_value < feature_operator_value[2])).all()
+                    (PropertyHasFeature.feature_id == feature_id) &
+                    (PropertyHasFeature.additional_feature_value < value)).all()
             # if operator is = returns list of all property ids who fills the requirements
-            elif feature_operator_value[1] == MoreLessEqual.EQUAL.value:
+            elif operator == MoreLessEqual.EQUAL.value:
                 property_ids_list = self.db.query(PropertyHasFeature.property_id).filter(
-                    (PropertyHasFeature.feature_id == feature_operator_value[0]) &
-                    (PropertyHasFeature.additional_feature_value == feature_operator_value[2])).all()
+                    (PropertyHasFeature.feature_id == feature_id) &
+                    (PropertyHasFeature.additional_feature_value == value)).all()
             # if this is first pass property dict is empty
             if not properties_ids_dict:
                 # property ids list is a list of tuples like ( id,) so I take first element

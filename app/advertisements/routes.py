@@ -30,7 +30,7 @@ def create_rent_advertisement(advertisement: AdvertisementSchemaIn):
 @advertisement_router.get("/get-all-on-pending-for-employee",
                           response_model=list[AdvertisementSchemaOut])
 def get_all_ads_on_pending_for_employee_id(employee_id: str):
-    return AdvertisementController.get_all_od_pending_for_employee_id(employee_id=employee_id)
+    return AdvertisementController.get_all_on_pending_for_employee_id(employee_id=employee_id)
 
 
 @advertisement_router.get("/get-active-advertisement-by-id/{advertisement_id}",
@@ -99,6 +99,5 @@ def update_pending_status(advertisement_id: str, status: EmployeeAdStatus):
 @advertisement_router.get("/get-stats-of-successful-ads", response_model=None)
 def get_stats_of_successful_ads(type_of_ad: TypeOfAd = None, type_of_property_id: str = None, city: str = None,
                                 start_date: str = None, end_date: str = None):
-    type_of_ad = None if type_of_ad is None else type_of_ad.value
     return AdvertisementController.get_stats(type_of_ad=type_of_ad, type_of_property_id=type_of_property_id,
                                              city=city, start_date=start_date, end_date=end_date)
