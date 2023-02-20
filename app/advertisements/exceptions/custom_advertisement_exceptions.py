@@ -39,6 +39,17 @@ class AdNotPendingException(CustomAdvertisementExceptions):
     status_code = 400
     message = "Ad not pending approval."
 
+
 class NoPendingAdsException(CustomAdvertisementExceptions):
     status_code = 400
     message = "No pending ads for you"
+
+
+class EnterValidStartEndDateException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Start date should represent date before end date."
+
+
+class EnterValidDateFormatException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Enter date in valid format: YYYY-MM-DD."

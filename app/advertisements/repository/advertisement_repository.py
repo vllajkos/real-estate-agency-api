@@ -1,13 +1,13 @@
 from datetime import timedelta, date
 
-from sqlalchemy import or_, desc
+from sqlalchemy import desc, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
 
 from app.advertisements.exceptions import MinMaxPriceException, AdvertisementNoLongerActiveException, \
-    AdvertisementIdDoesntExistException, NoExpiredAdsException, AdNotPendingException
+    AdvertisementIdDoesntExistException, NoExpiredAdsException, AdNotPendingException, EnterValidStartEndDateException
 from app.advertisements.models import Advertisement
-from app.advertisements.models.hardcoded_data import EXPIRES_IN_DAYS, TypeOfAd, AdStatus, SortByPrice
+from app.advertisements.models.hardcoded_data import EXPIRES_IN_DAYS, TypeOfAd, AdStatus, SortByPrice, STATS_PERIOD
 from app.properties.models import Property
 
 
@@ -30,7 +30,6 @@ class AdvertisementRepository:
     def get_all_on_pending_for_employee_id(self, employee_id: str):
         return self.db.query(Advertisement).filter((Advertisement.employee_id == employee_id) &
                                                    (Advertisement.status == AdStatus.PENDING.value)).all()
-
 
     def get_ad_by_id(self, advertisement_id: str):
         ad = self.db.query(Advertisement).filter(Advertisement.id == advertisement_id).first()
@@ -65,7 +64,8 @@ class AdvertisementRepository:
             query = query.filter(Advertisement.price > min_price)
         elif max_price:
             query = query.filter(Advertisement.price < max_price)
-        query = query.filter(Advertisement.property_id.in_(properties_ids_list))
+        if properties_ids_list:
+            query = query.filter(Advertisement.property_id.in_(properties_ids_list))
         return query.filter(Advertisement.status == AdStatus.ACTIVE.value).all()
 
     def get_all_active_ads(self):
@@ -95,6 +95,7 @@ class AdvertisementRepository:
         try:
             ad = self.get_active_advertisement_by_id(advertisement_id=advertisement_id)
             ad.status = status
+            ad.status_date = date.today()
             self.db.add(ad)
             self.db.commit()
             self.db.refresh(ad)
@@ -104,13 +105,14 @@ class AdvertisementRepository:
 
     def update_ad_status_to_expired(self):
         try:
-            start_date = date.today() - timedelta(days=EXPIRES_IN_DAYS)
+            end_date = date.today() - timedelta(days=EXPIRES_IN_DAYS)
             ads_list = self.db.query(Advertisement).filter((Advertisement.status == AdStatus.ACTIVE.value) &
-                                                           (Advertisement.start_date <= start_date)).all()
+                                                           (Advertisement.status_date <= end_date)).all()
             if ads_list:
                 expired_ads = []
                 for ad in ads_list:
                     ad.status = AdStatus.EXPIRED.value
+                    ad.status_date = date.today()
                     self.db.add(ad)
                     self.db.commit()
                     self.db.refresh(ad)
@@ -125,7 +127,7 @@ class AdvertisementRepository:
             ad = self.get_ad_by_id(advertisement_id=advertisement_id)
             if ad.status == AdStatus.PENDING.value:
                 ad.status = status
-                ad.start_date = date.today()
+                ad.status_date = date.today()
                 self.db.add(ad)
                 self.db.commit()
                 self.db.refresh(ad)
@@ -133,3 +135,31 @@ class AdvertisementRepository:
             raise AdNotPendingException
         except Exception as exc:
             raise exc
+
+    def get_stats(self, type_of_ad: str, type_of_property_id: str, city: str, start_date: date, end_date: date):
+        query = self.db.query(func.count(Advertisement.id),
+                              func.avg(Advertisement.price),
+                              func.avg(Advertisement.price)/func.avg(Property.square_meters)).join(Property).\
+            filter(Advertisement.status == AdStatus.SOLD_RENTED.value)
+
+        if type_of_ad:
+            query = query.filter(Advertisement.type_of_ad == type_of_ad)
+        if type_of_property_id:
+            query = query.filter(Property.type_of_property_id == type_of_property_id)
+        if city:
+            query = query.filter(Property.city == city)
+        if start_date and end_date:
+            if start_date > end_date:
+                raise EnterValidStartEndDateException
+            query = query.filter(Advertisement.status_date.between(start_date, end_date))
+        elif start_date:
+            query = query.filter(Advertisement.status_date > start_date)
+        elif end_date:
+            query = query.filter(Advertisement.status_date < end_date)
+            # (Advertisement.status == AdStatus.SOLD_RENTED.value) &
+            # (Advertisement.start_date.between(start_date, end_date)) &
+            # (Advertisement.type_of_ad == type_of_ad)).first()
+
+        # result is a tuple of two elements, first is an ads number second is an average price of property
+        return query.first()
+

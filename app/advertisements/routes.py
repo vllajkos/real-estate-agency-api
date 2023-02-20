@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi import APIRouter
 
 from app.advertisements.controller import AdvertisementController
@@ -74,7 +76,9 @@ def get_by_filter_parameters(filter_param: FilterSchemaIn):
                                                             min_square_meters=filter_param.min_square_meters,
                                                             max_square_meters=filter_param.max_square_meters,
                                                             type_of_property_id=filter_param.type_of_property_id,
-                                                            feature_id_list=filter_param.feature_id_list)
+                                                            feature_id_list=filter_param.feature_id_list,
+                                                            features_id_operator_value_list=
+                                                            filter_param.features_id_operator_value_list)
 
 
 @advertisement_router.put("/update-ad-status", response_model=AdvertisementSchemaOut)
@@ -90,3 +94,11 @@ def update_ad_status_to_expired():
 @advertisement_router.put("/update-pending-status", response_model=AdvertisementSchemaOut)
 def update_pending_status(advertisement_id: str, status: EmployeeAdStatus):
     return AdvertisementController.update_pending_status(advertisement_id=advertisement_id, status=status.value)
+
+
+@advertisement_router.get("/get-stats-of-successful-ads", response_model=None)
+def get_stats_of_successful_ads(type_of_ad: TypeOfAd = None, type_of_property_id: str = None, city: str = None,
+                                start_date: str = None, end_date: str = None):
+    type_of_ad = None if type_of_ad is None else type_of_ad.value
+    return AdvertisementController.get_stats(type_of_ad=type_of_ad, type_of_property_id=type_of_property_id,
+                                             city=city, start_date=start_date, end_date=end_date)

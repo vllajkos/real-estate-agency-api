@@ -15,7 +15,7 @@ class Advertisement(Base):
     id = Column(String(50), primary_key=True, default=uuid4)
     type_of_ad = Column(String(20), nullable=False)
     admission_date = Column(Date, default=date.today())
-    start_date = Column(Date, default=None)
+    status_date = Column(Date, default=None)
     price = Column(Float, nullable=False)
     description = Column(Text)
     status = Column(String(40), default=AdStatus.PENDING.value)
@@ -28,8 +28,8 @@ class Advertisement(Base):
     client = relationship("Client", lazy="subquery")
 
     def __init__(self, type_of_ad: str, price: float, description: str, property_id: str,
-                 client_id: str, employee_id: str, admission_date: date = date.today(), start_date: date = None,
-                 status: AdStatus = AdStatus.PENDING.value):
+                 client_id: str, employee_id: str, admission_date: date = date.today(),
+                 status_date: date = date.today(), status: AdStatus = AdStatus.PENDING.value):
         """Model of an Advertisement object"""
         self.type_of_ad = type_of_ad
         self.price = price
@@ -38,5 +38,5 @@ class Advertisement(Base):
         self.client_id = client_id
         self.employee_id = employee_id
         self.admission_date = admission_date
-        self.start_date = start_date
+        self.status_date = status_date
         self.status = status

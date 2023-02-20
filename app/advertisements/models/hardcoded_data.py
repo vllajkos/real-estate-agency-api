@@ -1,11 +1,18 @@
 from enum import Enum
 
 EXPIRES_IN_DAYS = 30
+STATS_PERIOD = 30
 
 
 class TypeOfAd(Enum):
     SALE = "sale"
     RENT = "rent"
+
+
+class MoreLessEqual(Enum):
+    MORE = ">"
+    LESS = "<"
+    EQUAL = "="
 
 
 class UserAdStatus(Enum):

@@ -63,6 +63,21 @@ class PropertyHasFeatureService:
             raise exc
 
     @staticmethod
+    def get_properties_ids_by_feature_value(features_id_operator_value_list: list[tuple[str, str, int]]):
+        # this is used in advertisement search only
+        # returns a list of ids of properties having needed features
+        try:
+            with SessionLocal() as db:
+                property_feature_repo = PropertyHasFeatureRepository(db)
+                properties_ids = property_feature_repo.get_properties_ids_by_feature_value(
+                    features_id_operator_value_list=features_id_operator_value_list)
+                if properties_ids:
+                    return properties_ids
+                raise PropertiesNotFoundByFilterParametersException
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
     def delete_feature_from_property_by_ids(property_id: str, feature_id: str):
         try:
             with SessionLocal() as db:

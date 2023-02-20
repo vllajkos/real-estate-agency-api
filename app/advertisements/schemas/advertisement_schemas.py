@@ -22,7 +22,7 @@ class AdvertisementSchemaOut(BaseModel):
     price: float
     description: str
     admission_date: date
-    start_date: Optional[date]
+    status_date: Optional[date]
     status: str
     property: PropertySchemaOut
     client: ClientSchemaOut
@@ -42,6 +42,7 @@ class FilterSchemaIn(BaseModel):
     max_square_meters: Optional[float]
     type_of_property_id: Optional[str]
     feature_id_list: Optional[list[str]]
+    features_id_operator_value_list: Optional[list[tuple[str, str, int]]]
 
     class Config:
         orm_mode = True

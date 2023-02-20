@@ -1,6 +1,8 @@
+from datetime import date
 from typing import Any
 
 from fastapi import HTTPException
+from starlette.responses import JSONResponse
 
 from app.advertisements.exceptions import CustomAdvertisementExceptions
 from app.advertisements.services import AdvertisementService
@@ -75,7 +77,8 @@ class AdvertisementController:
     @staticmethod
     def get_by_filter_parameters(type_of_ad: str, min_price: float, max_price: float,
                                  municipality: str, city: str, country: str, min_square_meters: float,
-                                 max_square_meters: float, type_of_property_id: str, feature_id_list: list[str]):
+                                 max_square_meters: float, type_of_property_id: str, feature_id_list: list[str],
+                                 features_id_operator_value_list: list[tuple[str, str, int]]):
         try:
             return AdvertisementService.get_by_filter_parameters(type_of_ad=type_of_ad,
                                                                  min_price=min_price,
@@ -85,7 +88,9 @@ class AdvertisementController:
                                                                  min_square_meters=min_square_meters,
                                                                  max_square_meters=max_square_meters,
                                                                  type_of_property_id=type_of_property_id,
-                                                                 feature_id_list=feature_id_list)
+                                                                 feature_id_list=feature_id_list,
+                                                                 features_id_operator_value_list=
+                                                                 features_id_operator_value_list)
         except CustomAdvertisementExceptions as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except CustomPropertyException as exc:
@@ -116,6 +121,19 @@ class AdvertisementController:
         try:
             return AdvertisementService.update_pending_status(advertisement_id=advertisement_id, status=status)
         except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def get_stats(type_of_ad: Any, type_of_property_id: str, city: str, start_date: str, end_date: str):
+        try:
+            content = AdvertisementService.get_stats(type_of_ad=type_of_ad, type_of_property_id=type_of_property_id,
+                                                     city=city, start_date=start_date, end_date=end_date)
+            return JSONResponse(content=content)
+        except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except CustomPropertyException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
