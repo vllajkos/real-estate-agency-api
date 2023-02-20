@@ -20,6 +20,11 @@ class MinMaxPriceException(CustomAdvertisementExceptions):
     message = "Min price cannot be greater than max price"
 
 
+class PendingApprovalException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Advertisement with property id pending approval already."
+
+
 class AdvertisementNoLongerActiveException(CustomAdvertisementExceptions):
     status_code = 400
     message = "Advertisement is no longer active or is still pending approval."

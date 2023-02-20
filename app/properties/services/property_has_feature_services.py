@@ -1,3 +1,4 @@
+from app.advertisements.models import MoreLessEqual
 from app.db import SessionLocal
 from app.properties.exceptions import PropertyAlreadyHasThatFeatureException, \
     TypeOfFeatureDoesntSupportAdditionalValueException, PropertyDoesntHaveFeaturesException, \
@@ -62,17 +63,75 @@ class PropertyHasFeatureService:
         except Exception as exc:
             raise exc
 
+    # @staticmethod
+    # def get_properties_ids_by_feature_value(features_id_operator_value_list: list[tuple[str, str, int]]):
+    #     # this is used in advertisement search only
+    #     # returns a list of ids of properties having needed features
+    #     try:
+    #         with SessionLocal() as db:
+    #             property_feature_repo = PropertyHasFeatureRepository(db)
+    #             properties_ids = property_feature_repo.get_properties_ids_by_feature_value(
+    #                 features_id_operator_value_list=features_id_operator_value_list)
+    #             if properties_ids:
+    #                 return properties_ids
+    #             raise PropertiesNotFoundByFilterParametersException
+    #     except Exception as exc:
+    #         raise exc
+
     @staticmethod
     def get_properties_ids_by_feature_value(features_id_operator_value_list: list[tuple[str, str, int]]):
         # this is used in advertisement search only
         # returns a list of ids of properties having needed features
         try:
             with SessionLocal() as db:
+                # making a list of features ids from list of tuples
+                feature_id_list = [tuple_feature[0] for tuple_feature in features_id_operator_value_list]
                 property_feature_repo = PropertyHasFeatureRepository(db)
-                properties_ids = property_feature_repo.get_properties_ids_by_feature_value(
-                    features_id_operator_value_list=features_id_operator_value_list)
-                if properties_ids:
-                    return properties_ids
+                # giving that list to repository to return properties that contain at least one of those features
+                # by checking if property has at least one feature from that list
+                property_has_feature_list = property_feature_repo.get_properties_by_features_list(
+                    features_id_list=feature_id_list)
+                properties_id_dict = {}
+                # unpacking tuples from feature_id_operator_value_list
+                for filter_feature_id, operator, filter_value in features_id_operator_value_list:
+                    # for every object of PropertyHasFeature type in list returned from first filter
+                    for property_has_feature_object in property_has_feature_list:
+                        # if needed feature id from request is equal to PropertyHasFeature object's feature id
+                        if filter_feature_id == property_has_feature_object.feature_id:
+                            # # checking which operator is being given for that feature id
+                            if operator == MoreLessEqual.LESS.value:
+                                # compare given value with object's value with that operator
+                                if filter_value > property_has_feature_object.additional_feature_value:
+                                    # if passes an operator check, checks if that property id is in properties ids dict
+                                    # if exists as a key value is raised for 1 more pass
+                                    if property_has_feature_object.property_id in properties_id_dict:
+                                        properties_id_dict[property_has_feature_object.property_id] += 1
+                                    # if not it sets key to property id and value to 1
+                                    else:
+                                        properties_id_dict.setdefault(property_has_feature_object.property_id, 1)
+                            # same logic goes for other to operators
+                            elif operator == MoreLessEqual.MORE.value:
+                                if filter_value < property_has_feature_object.additional_feature_value:
+                                    if property_has_feature_object.property_id in properties_id_dict:
+                                        properties_id_dict[property_has_feature_object.property_id] += 1
+                                    else:
+                                        properties_id_dict.setdefault(property_has_feature_object.property_id, 1)
+                            elif operator == MoreLessEqual.EQUAL.value:
+                                if filter_value == property_has_feature_object.additional_feature_value:
+                                    if property_has_feature_object.property_id in properties_id_dict:
+                                        properties_id_dict[property_has_feature_object.property_id] += 1
+                                    else:
+                                        properties_id_dict.setdefault(property_has_feature_object.property_id, 1)
+                # finally creates a list of properties ids as a list of single element tuple for those
+                # property ids that have passed all searching parameters by comparing value which represents
+                # number of passed filters vs number of provided filters
+                # if it is the same as  number than property id is added to the list
+                properties_ids_list = [(property_id,) for property_id, value in properties_id_dict.items()
+                                       if properties_id_dict[property_has_feature_object.property_id] == len(
+                                       features_id_operator_value_list)]
+                # if not empty returns list else raises an exception
+                if properties_ids_list:
+                    return properties_ids_list
                 raise PropertiesNotFoundByFilterParametersException
         except Exception as exc:
             raise exc

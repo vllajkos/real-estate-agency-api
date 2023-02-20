@@ -1,10 +1,9 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.advertisements.models import MoreLessEqual
-from app.properties.exceptions import TypeOfPropertyDoesntSupportFeatureException, \
-    PropertyDoesntHaveRequestedFeatureException
-from app.properties.models import TypeOfPropertyHasFeature, TypeOfFeature
+
+from app.properties.exceptions import PropertyDoesntHaveRequestedFeatureException
+
 from app.properties.models import PropertyHasFeature
 
 
@@ -36,43 +35,46 @@ class PropertyHasFeatureRepository:
         return self.db.query(PropertyHasFeature.property_id).filter(
             PropertyHasFeature.feature_id.in_(features_id_list)).all()
 
-    def get_properties_ids_by_feature_value(self, features_id_operator_value_list: list[tuple[str, str, int]]) -> list:
-        # returns filtered property's ids by filter parameters as single element tuple list
-        properties_ids_dict = {}
-        property_ids_list = []
-        # for feature operator value in list
-        for feature_id, operator, value in features_id_operator_value_list:
-            # if operator is > returns list of all property ids who fills the requirements
-            if operator == MoreLessEqual.MORE.value:
-                property_ids_list = self.db.query(PropertyHasFeature.property_id).filter(
-                    (PropertyHasFeature.feature_id == feature_id) &
-                    (PropertyHasFeature.additional_feature_value > value)).all()
-            # if operator is < returns list of all property ids who fills the requirements
-            elif operator == MoreLessEqual.LESS.value:
-                property_ids_list = self.db.query(PropertyHasFeature.property_id).filter(
-                    (PropertyHasFeature.feature_id == feature_id) &
-                    (PropertyHasFeature.additional_feature_value < value)).all()
-            # if operator is = returns list of all property ids who fills the requirements
-            elif operator == MoreLessEqual.EQUAL.value:
-                property_ids_list = self.db.query(PropertyHasFeature.property_id).filter(
-                    (PropertyHasFeature.feature_id == feature_id) &
-                    (PropertyHasFeature.additional_feature_value == value)).all()
-            # if this is first pass property dict is empty
-            if not properties_ids_dict:
-                # property ids list is a list of tuples like ( id,) so I take first element
-                for property_id in property_ids_list:
-                    properties_ids_dict.setdefault(property_id[0], 1)
-            else:
-                # property ids list is a list of tuples like ( id,) so I take first element
-                for property_id in property_ids_list:
-                    # every pass for id value is +1 if satisfy conditions
-                    if property_id[0] in properties_ids_dict:
-                        properties_ids_dict[property_id[0]] += 1
-            # if every time condition has been satisfied dict[id] should be same as len of feature list
-            # otherwise some condition wasn't satisfied
-            # returns a list of tuple of all property ids who meet conditions
-        return [(property_id,) for property_id, value in properties_ids_dict.items()
-                if properties_ids_dict[property_id] == len(features_id_operator_value_list)]
+    # def get_properties_ids_by_feature_value(self, features_id_operator_value_list: list[tuple[str, str, int]]) -> list:
+    #     # returns filtered property's ids by filter parameters as single element tuple list
+    #     properties_ids_dict = {}
+    #     property_ids_list = []
+    #     # for feature operator value in list
+    #     for feature_id, operator, value in features_id_operator_value_list:
+    #         # if operator is > returns list of all property ids who fills the requirements
+    #         if operator == MoreLessEqual.MORE.value:
+    #             property_ids_list = self.db.query(PropertyHasFeature.property_id).filter(
+    #                 (PropertyHasFeature.feature_id == feature_id) &
+    #                 (PropertyHasFeature.additional_feature_value > value)).all()
+    #         # if operator is < returns list of all property ids who fills the requirements
+    #         elif operator == MoreLessEqual.LESS.value:
+    #             property_ids_list = self.db.query(PropertyHasFeature.property_id).filter(
+    #                 (PropertyHasFeature.feature_id == feature_id) &
+    #                 (PropertyHasFeature.additional_feature_value < value)).all()
+    #         # if operator is = returns list of all property ids who fills the requirements
+    #         elif operator == MoreLessEqual.EQUAL.value:
+    #             property_ids_list = self.db.query(PropertyHasFeature.property_id).filter(
+    #                 (PropertyHasFeature.feature_id == feature_id) &
+    #                 (PropertyHasFeature.additional_feature_value == value)).all()
+    #         # if this is first pass property dict is empty
+    #         if not properties_ids_dict:
+    #             # property ids list is a list of tuples like ( id,) so I take first element
+    #             for property_id in property_ids_list:
+    #                 properties_ids_dict.setdefault(property_id[0], 1)
+    #         else:
+    #             # property ids list is a list of tuples like ( id,) so I take first element
+    #             for property_id in property_ids_list:
+    #                 # every pass for id value is +1 if satisfy conditions
+    #                 if property_id[0] in properties_ids_dict:
+    #                     properties_ids_dict[property_id[0]] += 1
+    #         # if every time condition has been satisfied dict[id] should be same as len of feature list
+    #         # otherwise some condition wasn't satisfied
+    #         # returns a list of tuple of all property ids who meet conditions
+    #     return [(property_id,) for property_id, value in properties_ids_dict.items()
+    #             if properties_ids_dict[property_id] == len(features_id_operator_value_list)]
+
+    def get_properties_by_features_list(self, features_id_list: list) -> list:
+        return self.db.query(PropertyHasFeature).filter(PropertyHasFeature.feature_id.in_(features_id_list)).all()
 
     def delete_feature_from_property_by_ids(self, property_id: str, feature_id: str):
         try:

@@ -26,6 +26,14 @@ class TypeOfPropertyHasFeatureController:
         except CustomPropertyException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
 
+    @staticmethod
+    def get_type_of_property_with_features_by_optional_values(type_id: str, optional_values: bool):
+        try:
+            return TypeOfPropertyHasFeatureService.get_type_of_property_with_features_by_optional_values(
+                type_of_property_id=type_id, optional_values=optional_values)
+        except CustomPropertyException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
     # @staticmethod
     # def get_features_for_type_of_property(type_id: str):
     #     try:

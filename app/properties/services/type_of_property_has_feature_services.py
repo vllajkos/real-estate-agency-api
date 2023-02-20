@@ -35,6 +35,17 @@ class TypeOfPropertyHasFeatureService:
                 return features
             raise TypeOfPropertyDoesntHaveFeaturesException
 
+    @staticmethod
+    def get_type_of_property_with_features_by_optional_values(type_of_property_id: str, optional_values: bool):
+        with SessionLocal() as db:
+            TypeOfPropertyService.get_by_id(type_id=type_of_property_id)
+            property_feature_repo = TypeOfPropertyHasFeatureRepository(db)
+            features = property_feature_repo.get_type_of_property_with_features_by_optional_values(
+                type_of_property_id=type_of_property_id, optional_values=optional_values)
+            if features:
+                return features
+            raise TypeOfPropertyDoesntHaveFeaturesException
+
     # @staticmethod
     # def get_features_for_type_of_property_id(type_of_property_id: str):
     #     with SessionLocal() as db:

@@ -1,9 +1,9 @@
-from datetime import date, datetime
+from datetime import datetime
 from typing import Any
 
 from app.advertisements.exceptions import TypeOfAdExistsForPropertyException, AdNotFoundByFilteredParametersException, \
-    NoPendingAdsException, EnterValidDateFormatException
-from app.advertisements.models.hardcoded_data import TypeOfAd, AdStatus
+    NoPendingAdsException, EnterValidDateFormatException, PendingApprovalException
+from app.advertisements.models.hardcoded_data import  AdStatus
 from app.advertisements.repository import AdvertisementRepository
 from app.db import SessionLocal
 from app.properties.services import PropertyService, PropertyHasFeatureService, TypeOfPropertyService
@@ -28,6 +28,10 @@ class AdvertisementService:
                     # if exists raises an exception
                     if ad.type_of_ad == type_of_ad and ad.status == AdStatus.ACTIVE.value:
                         raise TypeOfAdExistsForPropertyException
+                    # for all found ads for property id, checks if there is an ad pending approval with same type of ad
+                    # if exists raises an exception
+                    if ad.type_of_ad == type_of_ad and ad.status == AdStatus.PENDING.value:
+                        raise PendingApprovalException
                 # if everything is ok, ad can be created
                 # random employee's id is passed to an ad for ad to be revised and approved
                 employee = EmployeeService.get_random_employee()

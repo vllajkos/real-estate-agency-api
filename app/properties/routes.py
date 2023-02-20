@@ -86,6 +86,22 @@ def get_type_of_property_with_all_features(type_of_property_id: str):
     return TypeOfPropertyHasFeatureController.get_type_of_property_with_features(type_id=type_of_property_id)
 
 
+@type_of_property_has_type_of_feature_router.get("/get-type-of-property-with-all-features-with-optional-values"
+                                                 "/{type_of_property_id}",
+                                                 response_model=list[TypeOfPropertyHasFeatureSchemaOut])
+def get_type_of_property_with_all_features_with_optional_values(type_of_property_id: str):
+    return TypeOfPropertyHasFeatureController.get_type_of_property_with_features_by_optional_values(
+        type_id=type_of_property_id, optional_values=True)
+
+
+@type_of_property_has_type_of_feature_router.get("/get-type-of-property-with-all-features-without-optional-values"
+                                                 "/{type_of_property_id}",
+                                                 response_model=list[TypeOfPropertyHasFeatureSchemaOut])
+def get_type_of_property_with_all_features_without_optional_values(type_of_property_id: str):
+    return TypeOfPropertyHasFeatureController.get_type_of_property_with_features_by_optional_values(
+        type_id=type_of_property_id, optional_values=False)
+
+
 # @type_of_property_has_type_of_feature_router.get("/get-features-for-type-of-property/{type_of_property_id}",
 #                                                  response_model=list[TypeOfFeatureSchemaOut])
 # def get_features_for_type_of_property(type_of_property_id: str):

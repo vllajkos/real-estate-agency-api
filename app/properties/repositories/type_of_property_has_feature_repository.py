@@ -24,6 +24,11 @@ class TypeOfPropertyHasFeatureRepository:
         return self.db.query(TypeOfPropertyHasFeature).filter(
             TypeOfPropertyHasFeature.type_of_property_id == type_of_property_id).all()
 
+    def get_type_of_property_with_features_by_optional_values(self, type_of_property_id: str, optional_values: bool):
+        return self.db.query(TypeOfPropertyHasFeature).join(TypeOfFeature).filter(
+            (TypeOfPropertyHasFeature.type_of_property_id == type_of_property_id) &
+            (TypeOfFeature.optional_values == optional_values)).all()
+
     def get_type_of_property_and_type_of_feature_by_ids(self, type_of_property_id: str, feature_id: str):
         return self.db.query(TypeOfPropertyHasFeature).filter(
             (TypeOfPropertyHasFeature.type_of_property_id == type_of_property_id) &
