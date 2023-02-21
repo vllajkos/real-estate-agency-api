@@ -1,5 +1,7 @@
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+
+from app.advertisements.models import Advertisement
 from app.users.exceptions import FollowDoesntExistException
 from app.users.models import Follow
 
@@ -36,7 +38,7 @@ class FollowRepository:
             if follow:
                 self.db.delete(follow)
                 self.db.commit()
-                return True
+                return
             raise FollowDoesntExistException
         except Exception as exc:
             raise exc

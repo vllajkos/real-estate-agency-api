@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from app.users.controller import UserController, ClientController, EmployeeController, FollowController
 from app.users.schemas import UserSchemaIn, UserSchemaOut, UserSchemaLogin, ClientSchemaOut, ClientSchemaIn, \
     EmployeeSchemaIn, EmployeeSchemaOut
-from app.users.schemas.follow_schemas import FollowSchema
+from app.users.schemas.follow_schemas import FollowSchema, FollowForClientSchema, FollowForAdSchema
 
 user_router = APIRouter(prefix="/api/user", tags=["User"])
 
@@ -130,12 +130,12 @@ def create_follow(follow: FollowSchema):
     return FollowController.create(client_id=follow.client_id, advertisement_id=follow.advertisement_id)
 
 
-@follow_router.get("/get-all-by-client-id", response_model=FollowSchema)
+@follow_router.get("/get-all-by-client-id", response_model=list[FollowForClientSchema])
 def get_all_by_client_id(client_id: str):
     return FollowController.get_all_by_client_id(client_id=client_id)
 
 
-@follow_router.get("/get-all-by-advertisement-id", response_model=FollowSchema)
+@follow_router.get("/get-all-by-advertisement-id", response_model=list[FollowForAdSchema])
 def get_all_by_advertisement_id(advertisement_id: str):
     return FollowController.get_all_by_advertisement_id(advertisement_id=advertisement_id)
 

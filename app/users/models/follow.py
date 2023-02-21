@@ -1,6 +1,7 @@
 """Model of a Follow class which represents clients desires towards certain ads"""
 
 from sqlalchemy import Column, String, ForeignKey, UniqueConstraint, PrimaryKeyConstraint
+from sqlalchemy.orm import relationship
 
 from app.db import Base
 
@@ -12,6 +13,9 @@ class Follow(Base):
     advertisement_id = Column(String(36), ForeignKey("advertisements.id"), primary_key=True)
 
     __table_args__ = (PrimaryKeyConstraint("client_id", "advertisement_id", name="follows_uc"),)
+
+    clients = relationship("Client", lazy="subquery")
+    advertisements = relationship("Advertisement", lazy="subquery")
 
     def __init__(self, client_id: str, advertisement_id: str):
         """Model of a Follow object"""

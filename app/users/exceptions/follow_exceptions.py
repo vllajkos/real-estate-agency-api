@@ -19,3 +19,13 @@ class ClientsFollowingsException(CustomUserException):
 class AdFollowingsException(CustomUserException):
     status_code = 400
     message = "Advertisement doesn't have followings."
+
+
+class CantFollowYourOwnAdException(CustomUserException):
+    status_code = 400
+    message = "You cannot follow your own ad"
+
+
+class AdOrClientDoesntExistException(CustomUserException):
+    status_code = 400
+    message = "Either client or advertisement id doesn't exist."
