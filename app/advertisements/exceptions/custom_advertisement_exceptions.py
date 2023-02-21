@@ -63,3 +63,8 @@ class EnterValidDateFormatException(CustomAdvertisementExceptions):
 class NotAuthorizedException(CustomAdvertisementExceptions):
     status_code = 400
     message = "Not authorized to change status"
+
+
+class NoAdsForClientIdException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Provided client currently doesn't have active ads"

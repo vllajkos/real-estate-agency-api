@@ -51,6 +51,12 @@ class UserService:
             return user_repository.get_all_users()
 
     @staticmethod
+    def get_all_active_users():
+        with SessionLocal() as db:
+            user_repository = UserRepository(db)
+            return user_repository.get_all_active_users()
+
+    @staticmethod
     def delete(user_id: str):
         try:
             with SessionLocal() as db:

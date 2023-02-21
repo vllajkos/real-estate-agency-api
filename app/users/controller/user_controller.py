@@ -40,6 +40,12 @@ class UserController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
+    def get_all_active_users():
+        try:
+            return UserService.get_all_active_users()
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+    @staticmethod
     def delete_user_by_id(user_id: str):
         try:
             UserService.delete(user_id=user_id)

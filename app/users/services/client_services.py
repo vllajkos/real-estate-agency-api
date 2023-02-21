@@ -1,8 +1,7 @@
-import hashlib
+
 from app.db.database import SessionLocal
-from app.users.exceptions import ClientExistWithProvidedUserIdException, ClientIdDoesntExistException
-# from app.clients.exceptions import InvalidClientnameException, InvalidEmailException, ClientIdDoesntExistException, \
-#     InvalidPasswordException, InvalidLoginInfoException
+from app.users.exceptions import ClientExistWithProvidedUserIdException, ClientIdDoesntExistException, \
+    ClientDoesntExistForProvidedUserIdException
 
 from app.users.repositories import ClientRepository
 
@@ -39,6 +38,15 @@ class ClientService:
     #             raise exc
     #
     @staticmethod
+    def get_client_by_user_id(user_id: str):
+        with SessionLocal() as db:
+            client_repository = ClientRepository(db)
+            client = client_repository.get_client_by_user_id(user_id=user_id)
+            if client:
+                return client
+            raise ClientDoesntExistForProvidedUserIdException
+
+    @staticmethod
     def get_client_by_id(client_id: str):
         with SessionLocal() as db:
             client_repository = ClientRepository(db)
@@ -46,35 +54,36 @@ class ClientService:
             if client:
                 return client
             raise ClientIdDoesntExistException
-    #
-    # @staticmethod
-    # def get_all_clients():
-    #     with SessionLocal() as db:
-    #         client_repository = ClientRepository(db)
-    #         return client_repository.get_all_clients()
-    #
-    # @staticmethod
-    # def delete(client_id: str):
-    #     try:
-    #         with SessionLocal() as db:
-    #             client_repository = ClientRepository(db)
-    #             if client_repository.get_client_by_id(client_id=client_id):
-    #                 return client_repository.delete(client_id)
-    #             raise ClientIdDoesntExistException
-    #     except Exception as exc:
-    #         raise exc
-    #
-    # @staticmethod
-    # def update_client_active_status(client_id: str, active_status: bool):
-    #     with SessionLocal() as db:
-    #         try:
-    #             client_repository = ClientRepository(db)
-    #             if client_repository.get_client_by_id(client_id=client_id):
-    #                 return client_repository.update_client_active_status(client_id=client_id, active_status=active_status)
-    #             raise ClientIdDoesntExistException
-    #         except Exception as exc:
-    #             raise exc
-    #
+
+    @staticmethod
+    def get_all_clients():
+        with SessionLocal() as db:
+            client_repository = ClientRepository(db)
+            return client_repository.get_all_clients()
+
+    @staticmethod
+    def delete(client_id: str):
+        try:
+            with SessionLocal() as db:
+                client_repository = ClientRepository(db)
+                if client_repository.get_client_by_id(client_id=client_id):
+                    return client_repository.delete(client_id)
+                raise ClientIdDoesntExistException
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def update_client_phone_number(client_id: str, phone_number: str):
+        with SessionLocal() as db:
+            try:
+                client_repository = ClientRepository(db)
+                if client_repository.get_client_by_id(client_id=client_id):
+                    return client_repository.update_client_phone_number(client_id=client_id,
+                                                                        phone_number=phone_number)
+                raise ClientIdDoesntExistException
+            except Exception as exc:
+                raise exc
+
     # @staticmethod
     # def login_client(first_name_or_last_name: str, phone_number: str):
     #     with SessionLocal() as db:

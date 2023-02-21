@@ -42,6 +42,9 @@ class UserRepository:
     def get_user_by_id(self, user_id: str):
         return self.db.query(User).filter(User.id == user_id).first()
 
+    def get_all_active_users(self):
+        return self.db.query(User).filter(User.active_status == 1).all()
+
     def get_all_users(self):
         return self.db.query(User).all()
 

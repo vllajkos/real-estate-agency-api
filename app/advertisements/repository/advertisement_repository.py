@@ -31,6 +31,9 @@ class AdvertisementRepository:
         return self.db.query(Advertisement).filter((Advertisement.employee_id == employee_id) &
                                                    (Advertisement.status == AdStatus.PENDING.value)).all()
 
+    def get_all_active_for_client_id(self, client_id: str):
+        return self.db.query(Advertisement).filter((Advertisement.client_id == client_id) &
+                                                   (Advertisement.status == AdStatus.ACTIVE.value)).all()
     def get_ad_by_id(self, advertisement_id: str):
         ad = self.db.query(Advertisement).filter(Advertisement.id == advertisement_id).first()
         if ad:

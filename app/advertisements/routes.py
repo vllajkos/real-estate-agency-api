@@ -27,10 +27,14 @@ def create_rent_advertisement(advertisement: AdvertisementSchemaIn):
                                           client_id=advertisement.client_id)
 
 
-@advertisement_router.get("/get-all-on-pending-for-employee",
-                          response_model=list[AdvertisementSchemaOut])
+@advertisement_router.get("/get-all-on-pending-for-employee", response_model=list[AdvertisementSchemaOut])
 def get_all_ads_on_pending_for_employee_id(employee_id: str):
     return AdvertisementController.get_all_on_pending_for_employee_id(employee_id=employee_id)
+
+
+@advertisement_router.get("/get-all-active-ads-for-client-id/{client_id}", response_model=list[AdvertisementSchemaOut])
+def get_all_active_for_client_id(client_id: str):
+    return AdvertisementController.get_all_active_for_client_id(client_id=client_id)
 
 
 @advertisement_router.get("/get-active-advertisement-by-id/{advertisement_id}",

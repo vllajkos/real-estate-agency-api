@@ -27,30 +27,31 @@ class ClientRepository:
     #
     def get_client_by_id(self, client_id: str):
         return self.db.query(Client).filter(Client.id == client_id).first()
+
     #
-    # def get_all_clients(self):
-    #     return self.db.query(Client).all()
-    #
-    # def delete(self, client_id: str):
-    #     try:
-    #         client = self.db.query(Client).filter(Client.id == client_id).first()
-    #         if client:
-    #             self.db.delete(client)
-    #             self.db.commit()
-    #             return
-    #         raise ClientIdDoesntExistException
-    #     except Exception as exc:
-    #         raise exc
-    #
-    # def update_client_phone_number(self, client_id: str, phone_number: str):
-    #     try:
-    #         client = self.db.query(Client).filter(Client.id == client_id).first()
-    #         if client:
-    #             client.phone_number = phone_number
-    #             self.db.add(client)
-    #             self.db.commit()
-    #             self.db.refresh(client)
-    #             return client
-    #         raise ClientIdDoesntExistException
-    #     except Exception as exc:
-    #         raise exc
+    def get_all_clients(self):
+        return self.db.query(Client).all()
+
+    def delete(self, client_id: str):
+        try:
+            client = self.db.query(Client).filter(Client.id == client_id).first()
+            if client:
+                self.db.delete(client)
+                self.db.commit()
+                return
+            raise ClientIdDoesntExistException
+        except Exception as exc:
+            raise exc
+
+    def update_client_phone_number(self, client_id: str, phone_number: str):
+        try:
+            client = self.db.query(Client).filter(Client.id == client_id).first()
+            if client:
+                client.phone_number = phone_number
+                self.db.add(client)
+                self.db.commit()
+                self.db.refresh(client)
+                return client
+            raise ClientIdDoesntExistException
+        except Exception as exc:
+            raise exc

@@ -26,6 +26,15 @@ class AdvertisementController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
+    def get_all_active_for_client_id(client_id: str):
+        try:
+            return AdvertisementService.get_all_active_for_client_id(client_id=client_id)
+        except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
     def get_all_on_pending_for_employee_id(employee_id: str):
         try:
             return AdvertisementService.get_all_on_pending_for_employee_id(employee_id=employee_id)
@@ -33,7 +42,6 @@ class AdvertisementController:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
-
     @staticmethod
     def get_active_advertisement_by_id(advertisement_id: str):
         try:

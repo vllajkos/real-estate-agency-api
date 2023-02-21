@@ -12,8 +12,8 @@ class Employee(Base):
     id = Column(String(36), primary_key=True, default=uuid4)
     first_name = Column(String(30), nullable=False)
     last_name = Column(String(30), nullable=False)
-    job_title = Column(String(30))
-    phone_number = Column(String(50))
+    job_title = Column(String(30), nullable=False)
+    phone_number = Column(String(50), nullable=False)
 
     user_id = Column(String(36), ForeignKey("users.id"), unique=True)
     user = relationship("User", lazy='subquery')

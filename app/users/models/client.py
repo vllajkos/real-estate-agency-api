@@ -12,8 +12,8 @@ class Client(Base):
     """Defining a table for clients"""
     __tablename__ = "clients"
     id = Column(String(36), primary_key=True, default=uuid4)
-    first_name = Column(String(30))
-    last_name = Column(String(30))
+    first_name = Column(String(30), nullable=False)
+    last_name = Column(String(30), nullable=False)
     phone_number = Column(String(50))
 
     user_id = Column(String(36), ForeignKey("users.id"), unique=True)

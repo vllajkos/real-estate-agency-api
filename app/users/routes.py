@@ -27,6 +27,11 @@ def get_all_users():
     return UserController.get_all_users()
 
 
+@user_router.get("/get-all-active", response_model=list[UserSchemaOut])
+def get_all_active_users():
+    return UserController.get_all_active_users()
+
+
 @user_router.delete("/delete-by-id", response_model=None)
 def delete_user_by_id(user_id: str):
     return UserController.delete_user_by_id(user_id=user_id)
@@ -51,6 +56,31 @@ def create_client(client: ClientSchemaIn):
                                           phone_number=client.phone_number, user_id=client.user_id)
 
 
+@client_router.get("/get-all", response_model=list[ClientSchemaOut])
+def get_all_clients():
+    return ClientController.get_all_clients()
+
+
+@client_router.get("/get-client-by-id/{client_id}", response_model=ClientSchemaOut)
+def get_client_by_id(client_id: str):
+    return ClientController.get_client_by_id(client_id=client_id)
+
+
+@client_router.get("/get-client-by-user-id", response_model=ClientSchemaOut)
+def get_client_by_user_id(user_id: str):
+    return ClientController.get_client_by_user_id(user_id=user_id)
+
+
+@client_router.put("/update/phone-number", response_model=ClientSchemaOut)
+def update_clients_phone_number(client_id: str, phone_number: str):
+    return ClientController.update_clients_phone_number(client_id=client_id, phone_number=phone_number)
+
+
+@client_router.delete("/delete-by-id", response_model=None)
+def delete_client_by_id(client_id: str):
+    return ClientController.delete_client_by_id(client_id=client_id)
+
+
 employee_router = APIRouter(prefix="/api/employee", tags=["Employee"])
 
 
@@ -59,3 +89,33 @@ def create_employee(employee: EmployeeSchemaIn):
     return EmployeeController.create_employee(first_name=employee.first_name, last_name=employee.last_name,
                                               job_title=employee.job_title, phone_number=employee.phone_number,
                                               user_id=employee.user_id)
+
+
+@employee_router.get("/get-all", response_model=list[EmployeeSchemaOut])
+def get_all_employees():
+    return EmployeeController.get_all_employees()
+
+
+@employee_router.get("/get-employee-by-id", response_model=EmployeeSchemaOut)
+def get_employee_by_id(employee_id: str):
+    return EmployeeController.get_employee_by_id(employee_id=employee_id)
+
+
+@employee_router.get("/get-employee-by-user-id", response_model=EmployeeSchemaOut)
+def get_employee_by_user_id(user_id: str):
+    return EmployeeController.get_employee_by_user_id(user_id=user_id)
+
+
+@employee_router.put("/update/phone-number", response_model=EmployeeSchemaOut)
+def update_employees_phone_number(employee_id: str, phone_number: str):
+    return EmployeeController.update_employee_phone_number(employee_id=employee_id, phone_number=phone_number)
+
+
+@employee_router.put("/update/job_title", response_model=EmployeeSchemaOut)
+def update_employees_job_title(employee_id: str, job_title: str):
+    return EmployeeController.update_employee_job_title(employee_id=employee_id, job_title=job_title)
+
+
+@employee_router.delete("/delete-by-id", response_model=None)
+def delete_employee_by_id(employee_id: str):
+    return EmployeeController.delete_employee_by_id(employee_id=employee_id)

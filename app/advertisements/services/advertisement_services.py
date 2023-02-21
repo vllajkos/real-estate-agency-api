@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import Any
 
 from app.advertisements.exceptions import TypeOfAdExistsForPropertyException, AdNotFoundByFilteredParametersException, \
-    NoPendingAdsException, EnterValidDateFormatException, PendingApprovalException, NotAuthorizedException
-from app.advertisements.models.hardcoded_data import  AdStatus
+    NoPendingAdsException, EnterValidDateFormatException, PendingApprovalException, NotAuthorizedException, \
+    NoAdsForClientIdException
+from app.advertisements.models.hardcoded_data import AdStatus
 from app.advertisements.repository import AdvertisementRepository
 from app.db import SessionLocal
 from app.properties.services import PropertyService, PropertyHasFeatureService, TypeOfPropertyService
@@ -49,6 +50,19 @@ class AdvertisementService:
                 if ads:
                     return ads
                 raise NoPendingAdsException
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_all_active_for_client_id(client_id: str):
+        try:
+            with SessionLocal() as db:
+                ClientService.get_client_by_id(client_id=client_id)
+                ad_repository = AdvertisementRepository(db)
+                ads = ad_repository.get_all_active_for_client_id(client_id=client_id)
+                if ads:
+                    return ads
+                raise NoAdsForClientIdException
         except Exception as exc:
             raise exc
 

@@ -14,6 +14,7 @@ class ClientController:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
+
     #
     # @staticmethod
     # def create_superuser(username: str, email: str, password: str):
@@ -23,42 +24,50 @@ class ClientController:
     #         raise HTTPException(status_code=exc.status_code, detail=exc.message)
     #     except Exception as exc:
     #         raise HTTPException(status_code=500, detail=exc.__str__())
-    #
-    # @staticmethod
-    # def get_user_by_id(user_id: str):
-    #     try:
-    #         return UserService.get_user_by_id(user_id=user_id)
-    #     except CustomUserException as exc:
-    #         raise HTTPException(status_code=exc.status_code, detail=exc.message)
-    #     except Exception as exc:
-    #         raise HTTPException(status_code=500, detail=exc.__str__())
-    #
-    # @staticmethod
-    # def get_all_users():
-    #     try:
-    #         return UserService.get_all_users()
-    #     except Exception as exc:
-    #         raise HTTPException(status_code=500, detail=exc.__str__())
-    #
-    # @staticmethod
-    # def delete_user_by_id(user_id: str):
-    #     try:
-    #         UserService.delete(user_id=user_id)
-    #         return JSONResponse(status_code=200, content=f"User with provided id {user_id} successfully deleted.")
-    #     except CustomUserException as exc:
-    #         raise HTTPException(status_code=exc.status_code, detail=exc.message)
-    #     except Exception as exc:
-    #         raise HTTPException(status_code=500, detail=exc.__str__())
-    #
-    # @staticmethod
-    # def update_user_active_status(user_id: str, active_status: bool):
-    #     try:
-    #         return UserService.update_user_active_status(user_id=user_id, active_status=active_status)
-    #     except CustomUserException as exc:
-    #         raise HTTPException(status_code=exc.status_code, detail=exc.message)
-    #     except Exception as exc:
-    #         raise HTTPException(status_code=500, detail=exc.__str__())
-    #
+
+    @staticmethod
+    def get_client_by_user_id(user_id: str):
+        try:
+            return ClientService.get_client_by_user_id(user_id=user_id)
+        except CustomUserException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+    @staticmethod
+    def get_client_by_id(client_id: str):
+        try:
+            return ClientService.get_client_by_id(client_id=client_id)
+        except CustomUserException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def get_all_clients():
+        try:
+            return ClientService.get_all_clients()
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def delete_client_by_id(client_id: str):
+        try:
+            ClientService.delete(client_id=client_id)
+            return JSONResponse(status_code=200, content=f"Client with provided id {client_id} successfully deleted.")
+        except CustomUserException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def update_clients_phone_number(client_id: str, phone_number: str):
+        try:
+            return ClientService.update_client_phone_number(client_id=client_id, phone_number=phone_number)
+        except CustomUserException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
     # @staticmethod
     # def login_user(username_or_email: str, password: str):
     #     try:
