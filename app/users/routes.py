@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 
-from app.users.controller import UserController, ClientController, EmployeeController
+from app.users.controller import UserController, ClientController, EmployeeController, FollowController
 from app.users.schemas import UserSchemaIn, UserSchemaOut, UserSchemaLogin, ClientSchemaOut, ClientSchemaIn, \
     EmployeeSchemaIn, EmployeeSchemaOut
+from app.users.schemas.follow_schemas import FollowSchema
 
 user_router = APIRouter(prefix="/api/user", tags=["User"])
 
@@ -119,3 +120,32 @@ def update_employees_job_title(employee_id: str, job_title: str):
 @employee_router.delete("/delete-by-id", response_model=None)
 def delete_employee_by_id(employee_id: str):
     return EmployeeController.delete_employee_by_id(employee_id=employee_id)
+
+
+follow_router = APIRouter(prefix="/api/follow", tags=["Follow"])
+
+
+@follow_router.post("/create-follow", response_model=FollowSchema)
+def create_follow(follow: FollowSchema):
+    return FollowController.create(client_id=follow.client_id, advertisement_id=follow.advertisement_id)
+
+
+@follow_router.get("/get-all-by-client-id", response_model=FollowSchema)
+def get_all_by_client_id(client_id: str):
+    return FollowController.get_all_by_client_id(client_id=client_id)
+
+
+@follow_router.get("/get-all-by-advertisement-id", response_model=FollowSchema)
+def get_all_by_advertisement_id(advertisement_id: str):
+    return FollowController.get_all_by_advertisement_id(advertisement_id=advertisement_id)
+
+
+@follow_router.get("/get-all-by-client-id-and-advertisement-id", response_model=FollowSchema)
+def get_by_client_id_and_advertisement_id(client_id: str, advertisement_id: str):
+    return FollowController.get_by_client_id_and_advertisement_id(client_id=client_id,
+                                                                  advertisement_id=advertisement_id)
+
+
+@follow_router.delete("/delete-follow", response_model=None)
+def delete_follow(client_id: str, advertisement_id: str):
+    return FollowController.delete(client_id=client_id, advertisement_id=advertisement_id)

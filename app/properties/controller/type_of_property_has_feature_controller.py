@@ -1,9 +1,7 @@
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
 
-from app.properties.exceptions import TypeOfPropertyHasFeatureExistsException, TypeOfPropertyDoesntExistException, \
-    TypeOfFeatureDoesntExistException, TypeOfPropertyDoesntHaveFeaturesException, \
-    TypeOfPropertyDoesntSupportFeatureException, CustomPropertyException
+from app.properties.exceptions import CustomPropertyException
 from app.properties.services.type_of_property_has_feature_services import TypeOfPropertyHasFeatureService
 
 
