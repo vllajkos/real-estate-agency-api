@@ -58,3 +58,8 @@ class EnterValidStartEndDateException(CustomAdvertisementExceptions):
 class EnterValidDateFormatException(CustomAdvertisementExceptions):
     status_code = 400
     message = "Enter date in valid format: YYYY-MM-DD."
+
+
+class NotAuthorizedException(CustomAdvertisementExceptions):
+    status_code = 400
+    message = "Not authorized to change status"

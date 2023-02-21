@@ -91,6 +91,9 @@ class AdvertisementRepository:
             filter((Advertisement.type_of_ad == type_of_ad) & (Property.type_of_property_id == type_of_property_id) &
                    (Property.city == city) & (Advertisement.status == AdStatus.ACTIVE.value)).all()
 
+    def get_clients_id_by_advertisement_id(self, advertisement_id: str):
+        return self.db.query(Advertisement.client_id).filter(Advertisement.id == advertisement_id).first()
+
     def update_ad_status(self, advertisement_id: str, status: str):
         try:
             ad = self.get_active_advertisement_by_id(advertisement_id=advertisement_id)
@@ -139,7 +142,7 @@ class AdvertisementRepository:
     def get_stats(self, type_of_ad: str, type_of_property_id: str, city: str, start_date: date, end_date: date):
         query = self.db.query(func.count(Advertisement.id),
                               func.avg(Advertisement.price),
-                              func.avg(Advertisement.price)/func.avg(Property.square_meters)).join(Property).\
+                              func.avg(Advertisement.price) / func.avg(Property.square_meters)).join(Property). \
             filter(Advertisement.status == AdStatus.SOLD_RENTED.value)
 
         if type_of_ad:
@@ -162,4 +165,3 @@ class AdvertisementRepository:
 
         # result is a tuple of two elements, first is an ads number second is an average price of property
         return query.first()
-

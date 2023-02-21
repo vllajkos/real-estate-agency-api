@@ -98,9 +98,10 @@ class AdvertisementController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
-    def update_ad_status(advertisement_id: str, status: Any):
+    def update_ad_status(clients_id: str, advertisement_id: str, status: Any):
         try:
-            return AdvertisementService.update_status(advertisement_id=advertisement_id, status=status)
+            return AdvertisementService.update_status(clients_id=clients_id,
+                                                      advertisement_id=advertisement_id, status=status)
         except CustomAdvertisementExceptions as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:

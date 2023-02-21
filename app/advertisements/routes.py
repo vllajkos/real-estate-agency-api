@@ -82,8 +82,9 @@ def get_by_filter_parameters(filter_param: FilterSchemaIn):
 
 
 @advertisement_router.put("/update-ad-status", response_model=AdvertisementSchemaOut)
-def update_ad_status_as_user(advertisement_id: str, status: UserAdStatus):
-    return AdvertisementController.update_ad_status(advertisement_id=advertisement_id, status=status.value)
+def update_ad_status_as_user(clients_id: str, advertisement_id: str, status: UserAdStatus):
+    return AdvertisementController.update_ad_status(clients_id=clients_id,
+                                                    advertisement_id=advertisement_id, status=status.value)
 
 
 @advertisement_router.put("/update-ad-status-to-expired", response_model=list[AdvertisementSchemaOut])

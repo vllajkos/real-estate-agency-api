@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any
 
 from app.advertisements.exceptions import TypeOfAdExistsForPropertyException, AdNotFoundByFilteredParametersException, \
-    NoPendingAdsException, EnterValidDateFormatException, PendingApprovalException
+    NoPendingAdsException, EnterValidDateFormatException, PendingApprovalException, NotAuthorizedException
 from app.advertisements.models.hardcoded_data import  AdStatus
 from app.advertisements.repository import AdvertisementRepository
 from app.db import SessionLocal
@@ -191,11 +191,15 @@ class AdvertisementService:
     #     except Exception as exc:
     #         raise exc
     @staticmethod
-    def update_status(advertisement_id: str, status: str):
+    def update_status(clients_id: str, advertisement_id: str, status: str):
         try:
             with SessionLocal() as db:
+
                 ad_repo = AdvertisementRepository(db)
-                return ad_repo.update_ad_status(advertisement_id=advertisement_id, status=status)
+                clients_id_tuple = ad_repo.get_clients_id_by_advertisement_id(advertisement_id=advertisement_id)
+                if clients_id_tuple[0] == clients_id:
+                    return ad_repo.update_ad_status(advertisement_id=advertisement_id, status=status)
+                raise NotAuthorizedException
         except Exception as exc:
             raise exc
 

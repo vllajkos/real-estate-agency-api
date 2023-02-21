@@ -63,7 +63,8 @@ class PropertyRepository:
     def get_properties_ids_by_filter_parameters(self, municipality: str, city: str, country: str,
                                                 min_square_meters: float, max_square_meters: float,
                                                 type_of_property_id: str) -> list:
-        # returns for all none variables filtered property's ids by filter parameters as single tuple list
+        # returns for all not none parameters filtered property's ids by those parameters as single tuple list
+        # of properties ids
         query = self.db.query(Property.id)
         if municipality:
             query = query.filter(Property.municipality == municipality)
