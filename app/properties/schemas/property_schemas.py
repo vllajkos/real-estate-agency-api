@@ -1,8 +1,6 @@
+"""Property Schemas"""
 from typing import Optional
-
-from pydantic import BaseModel, UUID4
-
-from app.properties.models import TypeOfProperty
+from pydantic import BaseModel, UUID4, PositiveFloat, StrictStr, NonNegativeFloat
 from app.properties.schemas import TypeOfPropertySchema
 from app.properties.schemas.property_has_feature_schemas import PropertyHasFeatureSchemaOut
 
@@ -10,11 +8,10 @@ from app.properties.schemas.property_has_feature_schemas import PropertyHasFeatu
 class PropertySchemaOut(BaseModel):
     id: UUID4
     street: str
-    municipality: str
-    city: str
-    country: str
-    square_meters: float
-    # type_of_property_id: str
+    municipality: StrictStr
+    city: StrictStr
+    country: StrictStr
+    square_meters: PositiveFloat
     type_of_property: TypeOfPropertySchema
     features: list[PropertyHasFeatureSchemaOut]
 
@@ -24,10 +21,10 @@ class PropertySchemaOut(BaseModel):
 
 class PropertySchemaIn(BaseModel):
     street: str
-    municipality: str
-    city: str
-    country: str
-    square_meters: float
+    municipality: StrictStr
+    city: StrictStr
+    country: StrictStr
+    square_meters: PositiveFloat
     type_of_property_id: str
 
     class Config:
@@ -35,11 +32,11 @@ class PropertySchemaIn(BaseModel):
 
 
 class PropertySchemaFilter(BaseModel):
-    municipality: Optional[str]
-    city: Optional[str]
-    country: Optional[str]
-    min_square_meters: Optional[float]
-    max_square_meters: Optional[float]
+    municipality: Optional[StrictStr]
+    city: Optional[StrictStr]
+    country: Optional[StrictStr]
+    min_square_meters: Optional[NonNegativeFloat]
+    max_square_meters: Optional[PositiveFloat]
     type_of_property_id: Optional[str]
 
     class Config:

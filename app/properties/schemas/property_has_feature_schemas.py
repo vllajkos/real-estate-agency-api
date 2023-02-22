@@ -1,7 +1,6 @@
+"""Property has feature Schemas"""
 from typing import Optional
-
 from pydantic import PositiveInt, BaseModel
-
 from app.properties.schemas import TypeOfFeatureSchemaOut
 
 
@@ -17,7 +16,6 @@ class PropertyHasFeatureSchemaWithADIn(BaseModel):
 class PropertyHasFeatureSchemaWithoutAVIn(BaseModel):
     property_id: str
     feature_id: str
-
 
     class Config:
         orm_mode = True

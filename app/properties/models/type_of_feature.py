@@ -1,7 +1,7 @@
-"""Model of a type of feature"""
+"""
+Model of a type of feature
+"""
 from uuid import uuid4
-
-
 from sqlalchemy import Column, String, Boolean
 from app.db import Base
 

@@ -1,3 +1,6 @@
+"""
+Model for types of properties
+"""
 from uuid import uuid4
 from sqlalchemy import Column, String
 from app.db import Base

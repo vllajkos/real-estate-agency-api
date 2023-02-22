@@ -1,16 +1,17 @@
-from pydantic import BaseModel, UUID4
+"""Type of feature Schemas"""
+from pydantic import BaseModel, UUID4, StrictStr
 
 
 class TypeOfFeatureSchemaOut(BaseModel):
     id: UUID4
-    feature: str
+    feature: StrictStr
 
     class Config:
         orm_mode = True
 
 
 class TypeOfFeatureSchemaIn(BaseModel):
-    feature: str
+    feature: StrictStr
     optional_values: bool
 
     class Config:
@@ -19,7 +20,7 @@ class TypeOfFeatureSchemaIn(BaseModel):
 
 class TypeOfFeatureSchema(BaseModel):
     id: UUID4
-    feature: str
+    feature: StrictStr
     optional_values: bool
 
     class Config:

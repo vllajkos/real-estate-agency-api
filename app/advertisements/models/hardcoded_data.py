@@ -1,3 +1,4 @@
+"""Hardcoded data"""
 from enum import Enum
 
 EXPIRES_IN_DAYS = 30

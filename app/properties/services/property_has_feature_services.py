@@ -1,17 +1,20 @@
+"""Property has feature service layer"""
 from app.advertisements.models import MoreLessEqual
 from app.db import SessionLocal
 from app.properties.exceptions import PropertyAlreadyHasThatFeatureException, \
     TypeOfFeatureDoesntSupportAdditionalValueException, PropertyDoesntHaveFeaturesException, \
     PropertyDoesntHaveRequestedFeatureException, PropertiesNotFoundByFilterParametersException
+from app.properties.models import PropertyHasFeature
 from app.properties.repositories import PropertyHasFeatureRepository
 from app.properties.services import TypeOfFeatureService, PropertyService
 from app.properties.services import TypeOfPropertyHasFeatureService as CheckFeatureSupport
 
 
 class PropertyHasFeatureService:
+    """Class containing method Property has feature service layer"""
 
     @staticmethod
-    def create(property_id: str, feature_id: str, additional_feature_value: int):
+    def create(property_id: str, feature_id: str, additional_feature_value: int) -> PropertyHasFeature:
         """ This method creates a bond between concrete property created by user and features available for that
         concrete type of property which user can add to his property if feature is supported by type of property """
         try:
@@ -36,7 +39,10 @@ class PropertyHasFeatureService:
             raise exc
 
     @staticmethod
-    def get_all_features_for_property_by_id(property_id: str):
+    def get_all_features_for_property_by_id(property_id: str) -> list:
+        """
+        It gets all the features for a property by its id
+        """
         try:
             with SessionLocal() as db:
                 PropertyService.get_property_by_id(property_id=property_id)
@@ -49,7 +55,10 @@ class PropertyHasFeatureService:
             raise exc
 
     @staticmethod
-    def get_properties_ids_by_filter_parameters(features_id_list: list[str]):
+    def get_properties_ids_by_filter_parameters(features_id_list: list[str]) -> list:
+        """
+        It returns a list of ids of properties having needed features
+        """
         # this is used in advertisement search only
         # returns a list of ids of properties having needed features
         try:
@@ -63,23 +72,13 @@ class PropertyHasFeatureService:
         except Exception as exc:
             raise exc
 
-    # @staticmethod
-    # def get_properties_ids_by_feature_value(features_id_operator_value_list: list[tuple[str, str, int]]):
-    #     # this is used in advertisement search only
-    #     # returns a list of ids of properties having needed features
-    #     try:
-    #         with SessionLocal() as db:
-    #             property_feature_repo = PropertyHasFeatureRepository(db)
-    #             properties_ids = property_feature_repo.get_properties_ids_by_feature_value(
-    #                 features_id_operator_value_list=features_id_operator_value_list)
-    #             if properties_ids:
-    #                 return properties_ids
-    #             raise PropertiesNotFoundByFilterParametersException
-    #     except Exception as exc:
-    #         raise exc
-
     @staticmethod
-    def get_properties_ids_by_feature_value(features_id_operator_value_list: list[tuple[str, str, int]]):
+    def get_properties_ids_by_feature_value(features_id_operator_value_list: list[tuple[str, str, int]]) -> list:
+        """
+        It takes a list of tuples of feature id, operator and value,
+         and returns a list of tuples of property ids that have
+        at least one of those features and pass the operator check
+        """
         # this is used in advertisement search only
         # returns a list of ids of properties having needed features
         try:
@@ -128,7 +127,7 @@ class PropertyHasFeatureService:
                 # if it is the same as  number than property id is added to the list
                 properties_ids_list = [(property_id,) for property_id, value in properties_id_dict.items()
                                        if properties_id_dict[property_has_feature_object.property_id] == len(
-                                       features_id_operator_value_list)]
+                        features_id_operator_value_list)]
                 # if not empty returns list else raises an exception
                 if properties_ids_list:
                     return properties_ids_list
@@ -137,7 +136,10 @@ class PropertyHasFeatureService:
             raise exc
 
     @staticmethod
-    def delete_feature_from_property_by_ids(property_id: str, feature_id: str):
+    def delete_feature_from_property_by_ids(property_id: str, feature_id: str) -> None:
+        """
+        It deletes a feature from a property by the property and feature ids
+        """
         try:
             with SessionLocal() as db:
                 PropertyService.get_property_by_id(property_id=property_id)

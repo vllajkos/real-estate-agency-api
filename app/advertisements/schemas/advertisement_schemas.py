@@ -1,6 +1,6 @@
+"""Advertisement schemas"""
 from datetime import date
 from typing import Optional
-
 from pydantic import BaseModel, PositiveFloat, PositiveInt
 from app.properties.schemas import PropertySchemaOut
 from app.users.schemas import ClientSchemaOut
@@ -8,7 +8,7 @@ from app.users.schemas import ClientSchemaOut
 
 class AdvertisementSchemaIn(BaseModel):
     price: PositiveFloat
-    description: str
+    description: Optional[str]
     property_id: str
     client_id: str
 

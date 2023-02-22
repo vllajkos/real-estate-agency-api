@@ -1,7 +1,9 @@
+"""
+Model of a Property
+"""
 from uuid import uuid4
 from sqlalchemy import Column, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
-
 from app.db import Base
 
 

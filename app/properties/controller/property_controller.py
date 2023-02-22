@@ -1,16 +1,22 @@
+"""Property controller layer"""
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
-
 from app.properties.exceptions import TypeOfPropertyDoesntExistException, PropertiesNotFoundException, \
     PropertiesNotFoundByMunicipalityException, PropertiesNotFoundByCityException, PropertyNotFoundException, \
     CustomPropertyException
+from app.properties.models import Property
 from app.properties.services import PropertyService
 
 
 class PropertyController:
+    """Class containing Property controller methods"""
 
     @staticmethod
-    def create(street: str, municipality: str, city: str, country: str, square_meters: float, type_of_property_id: str):
+    def create(street: str, municipality: str, city: str, country: str,
+               square_meters: float, type_of_property_id: str) -> Property:
+        """
+        It creates a property
+        """
         try:
             return PropertyService.create(street=street, municipality=municipality, city=city, country=country,
                                           square_meters=square_meters, type_of_property_id=type_of_property_id)
@@ -20,14 +26,20 @@ class PropertyController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
-    def get_all():
+    def get_all() -> list:
+        """
+        It returns all the properties in the database
+        """
         try:
             return PropertyService.get_all()
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
-    def get_property_by_id(property_id: str):
+    def get_property_by_id(property_id: str) -> Property:
+        """
+        This function gets a property by its id
+        """
         try:
             return PropertyService.get_property_by_id(property_id=property_id)
         except PropertyNotFoundException as exc:
@@ -36,7 +48,10 @@ class PropertyController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
-    def get_all_properties_for_type_id(type_of_property_id: str):
+    def get_all_properties_for_type_id(type_of_property_id: str) -> list:
+        """
+        It returns all properties for a given type of property id.
+        """
         try:
             properties = PropertyService.get_all_properties_for_type_id(type_of_property_id=type_of_property_id)
             if properties:
@@ -47,7 +62,10 @@ class PropertyController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
-    def get_all_properties_by_municipality(municipality: str):
+    def get_all_properties_by_municipality(municipality: str) -> list:
+        """
+        It returns all properties in a given municipality
+        """
         try:
             return PropertyService.get_all_properties_by_municipality(municipality=municipality)
         except PropertiesNotFoundByMunicipalityException as exc:
@@ -56,7 +74,10 @@ class PropertyController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
-    def get_all_properties_by_city(city: str):
+    def get_all_properties_by_city(city: str) -> list:
+        """
+        It returns all properties in a given city
+        """
         try:
             return PropertyService.get_all_properties_by_city(city=city)
         except PropertiesNotFoundByCityException as exc:
@@ -67,7 +88,8 @@ class PropertyController:
     @staticmethod
     def get_properties_by_filter_parameters(municipality: str, city: str, country: str,
                                             min_square_meters: float, max_square_meters: float,
-                                            type_of_property_id: str):
+                                            type_of_property_id: str) -> list:
+        """Returns properties filtered by search parameters"""
         try:
             return PropertyService.get_properties_by_filter_parameters(municipality=municipality,
                                                                        city=city, country=country,
@@ -80,7 +102,10 @@ class PropertyController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
-    def delete(property_id: str):
+    def delete(property_id: str) -> JSONResponse:
+        """
+        It deletes a property
+        """
         try:
             PropertyService.delete(property_id=property_id)
             return JSONResponse(status_code=200, content="Property successfully deleted")

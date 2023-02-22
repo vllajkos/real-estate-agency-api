@@ -1,3 +1,4 @@
+"""Property has feature Exceptions"""
 from app.properties.exceptions.custom_property_exception import CustomPropertyException
 
 

@@ -1,14 +1,20 @@
+"""Service layer of a property"""
 from app.db import SessionLocal
 from app.properties.exceptions import PropertiesNotFoundException, PropertiesNotFoundByMunicipalityException, \
     PropertiesNotFoundByCityException, PropertyNotFoundException, PropertiesNotFoundByFilterParametersException
+from app.properties.models import Property
 from app.properties.repositories import PropertyRepository
 from app.properties.services import TypeOfPropertyService
 
 
 class PropertyService:
-
+    """Class containing methods from service layer of a property"""
     @staticmethod
-    def create(street: str, municipality: str, city: str, country: str, square_meters: float, type_of_property_id: str):
+    def create(street: str, municipality: str, city: str, country: str,
+               square_meters: float, type_of_property_id: str) -> Property:
+        """
+        It creates a property in the database
+        """
         try:
             with SessionLocal() as db:
                 TypeOfPropertyService.get_by_id(type_id=type_of_property_id)
@@ -19,7 +25,10 @@ class PropertyService:
             raise exc
 
     @staticmethod
-    def get_all():
+    def get_all() -> list:
+        """
+        It gets all the properties from the database
+        """
         try:
             with SessionLocal() as db:
                 property_repo = PropertyRepository(db=db)
@@ -28,7 +37,10 @@ class PropertyService:
             raise exc
 
     @staticmethod
-    def get_property_by_id(property_id: str):
+    def get_property_by_id(property_id: str) -> Property | None:
+        """
+         This function gets a property by its id
+        """
         try:
             with SessionLocal() as db:
                 property_repo = PropertyRepository(db=db)
@@ -40,7 +52,10 @@ class PropertyService:
             raise exc
 
     @staticmethod
-    def get_all_properties_for_type_id(type_of_property_id: str):
+    def get_all_properties_for_type_id(type_of_property_id: str) -> list:
+        """
+        It gets all properties for a given type of property id
+        """
         try:
             with SessionLocal() as db:
                 property_repo = PropertyRepository(db=db)
@@ -52,7 +67,10 @@ class PropertyService:
             raise exc
 
     @staticmethod
-    def get_all_properties_by_municipality(municipality: str):
+    def get_all_properties_by_municipality(municipality: str) -> list:
+        """
+        It gets all properties by municipality
+        """
         try:
             with SessionLocal() as db:
                 property_repo = PropertyRepository(db)
@@ -64,7 +82,10 @@ class PropertyService:
             raise exc
 
     @staticmethod
-    def get_all_properties_by_city(city: str):
+    def get_all_properties_by_city(city: str) -> list:
+        """
+        It gets all properties by city
+        """
         try:
             with SessionLocal() as db:
                 property_repo = PropertyRepository(db)
@@ -78,7 +99,8 @@ class PropertyService:
     @staticmethod
     def get_properties_by_filter_parameters(municipality: str, city: str, country: str,
                                             min_square_meters: float, max_square_meters: float,
-                                            type_of_property_id: str):
+                                            type_of_property_id: str) -> list:
+        """Returns properties found by filter parameters"""
         try:
             with SessionLocal() as db:
                 property_repo = PropertyRepository(db)
@@ -96,7 +118,8 @@ class PropertyService:
     @staticmethod
     def get_properties_ids_by_filter_parameters(municipality: str, city: str, country: str,
                                                 min_square_meters: float, max_square_meters: float,
-                                                type_of_property_id: str):
+                                                type_of_property_id: str) -> list:
+        """ Returns list of properties ids by filter parameters"""
         try:
             with SessionLocal() as db:
                 property_repo = PropertyRepository(db)
@@ -112,7 +135,8 @@ class PropertyService:
             raise exc
 
     @staticmethod
-    def delete(property_id: str):
+    def delete(property_id: str) -> None:
+        """Deletes property by id"""
         try:
             with SessionLocal() as db:
                 property_repo = PropertyRepository(db)

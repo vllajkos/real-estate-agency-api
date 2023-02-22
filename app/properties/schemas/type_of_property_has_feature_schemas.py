@@ -1,3 +1,4 @@
+"""Type of Property has type of feature Schemas"""
 from pydantic import BaseModel
 
 from app.properties.schemas import TypeOfFeatureSchema

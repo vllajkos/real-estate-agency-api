@@ -1,3 +1,6 @@
+"""Custom Advertisement exceptions"""
+
+
 class CustomAdvertisementExceptions(Exception):
     status_code = 400
     message = ""

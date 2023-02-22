@@ -1,10 +1,8 @@
 """Model of an Advertisement"""
 from datetime import date
 from uuid import uuid4
-
 from sqlalchemy import Column, String, Float, ForeignKey, Date, Text
 from sqlalchemy.orm import relationship
-
 from app.advertisements.models.hardcoded_data import AdStatus
 from app.db import Base
 

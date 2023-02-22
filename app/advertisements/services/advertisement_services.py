@@ -1,9 +1,10 @@
+"""Service layer for advertisements"""
 from datetime import datetime
 from typing import Any
-
 from app.advertisements.exceptions import TypeOfAdExistsForPropertyException, AdNotFoundByFilteredParametersException, \
     NoPendingAdsException, EnterValidDateFormatException, PendingApprovalException, NotAuthorizedException, \
     NoAdsForClientIdException
+from app.advertisements.models import Advertisement
 from app.advertisements.models.hardcoded_data import AdStatus
 from app.advertisements.repository import AdvertisementRepository
 from app.db import SessionLocal
@@ -12,9 +13,11 @@ from app.users.services import ClientService, EmployeeService
 
 
 class AdvertisementService:
+    """Class containing Advertisement service methods"""
 
     @staticmethod
-    def create(type_of_ad: str, price: float, description: str, property_id: str, client_id: str):
+    def create(type_of_ad: str, price: float, description: str, property_id: str, client_id: str) -> Advertisement:
+        """Creates Advertisement"""
         try:
             with SessionLocal() as db:
                 # checks if property id exist if not raises an exception
@@ -42,7 +45,8 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_all_on_pending_for_employee_id(employee_id: str):
+    def get_all_on_pending_for_employee_id(employee_id: str) -> list:
+        """ Get all ads on pending for employee id"""
         try:
             with SessionLocal() as db:
                 ad_repository = AdvertisementRepository(db)
@@ -54,7 +58,10 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_all_active_for_client_id(client_id: str):
+    def get_all_active_for_client_id(client_id: str) -> list:
+        """
+        It gets all active ads for a client id
+        """
         try:
             with SessionLocal() as db:
                 ClientService.get_client_by_id(client_id=client_id)
@@ -67,7 +74,10 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_active_advertisement_by_id(advertisement_id: str):
+    def get_active_advertisement_by_id(advertisement_id: str) -> Advertisement:
+        """
+        It gets an active advertisement by id
+        """
         try:
             with SessionLocal() as db:
                 ad_repository = AdvertisementRepository(db)
@@ -76,7 +86,10 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_all_active_ads():
+    def get_all_active_ads() -> list:
+        """
+        It gets all active ads from the database
+        """
         try:
             with SessionLocal() as db:
                 ad_repository = AdvertisementRepository(db)
@@ -85,7 +98,10 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_all_active_ads_by_type_of_ad_sorted(type_of_ad: str, sort_: str):
+    def get_all_active_ads_by_type_of_ad_sorted(type_of_ad: str, sort_: str) -> list:
+        """
+        It gets all active ads by type of ad and sorts them by the sort parameter
+        """
         try:
             with SessionLocal() as db:
                 ad_repository = AdvertisementRepository(db)
@@ -94,7 +110,10 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_all_active_ads_by_type_of_ad_and_type_of_property_id(type_of_ad: str, type_of_property_id: str):
+    def get_all_active_ads_by_type_of_ad_and_type_of_property_id(type_of_ad: str, type_of_property_id: str) -> list:
+        """
+        It gets all active ads by type of ad and type of property id
+        """
         try:
             with SessionLocal() as db:
                 ad_repository = AdvertisementRepository(db)
@@ -104,7 +123,10 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_all_by_ad_and_property_types_and_city(type_of_ad: str, type_of_property_id: str, city: str):
+    def get_all_by_ad_and_property_types_and_city(type_of_ad: str, type_of_property_id: str, city: str) -> list:
+        """
+        It gets all the advertisements by type of ad, type of property and city
+        """
         try:
             with SessionLocal() as db:
                 ad_repository = AdvertisementRepository(db)
@@ -118,7 +140,8 @@ class AdvertisementService:
     def get_by_filter_parameters(type_of_ad: str, min_price: float, max_price: float,
                                  municipality: str, city: str, country: str, min_square_meters: float,
                                  max_square_meters: float, type_of_property_id: str, feature_id_list: list[str],
-                                 features_id_operator_value_list: list[tuple[str, str, int]]):
+                                 features_id_operator_value_list: list[tuple[str, str, int]]) -> list:
+        """ Returns active advertisements by filter parameters"""
         try:
             with SessionLocal() as db:
                 properties = []
@@ -170,42 +193,12 @@ class AdvertisementService:
         except Exception as exc:
             raise exc
 
-    # def get_by_filter_parameters(type_of_ad: str, min_price: float, max_price: float,
-    #                              municipality: str, city: str, country: str, min_square_meters: float,
-    #                              max_square_meters: float, type_of_property_id: str, feature_id_list: list[str]):
-    #     try:
-    #         with SessionLocal() as db:
-    #             # returns found property ids if they satisfy search parameters or raises an exception if non found
-    #             properties_1 = PropertyService.get_properties_ids_by_filter_parameters(
-    #                 municipality=municipality, city=city, country=country, min_square_meters=min_square_meters,
-    #                 max_square_meters=max_square_meters, type_of_property_id=type_of_property_id)
-    #             # if there are provided features to search for
-    #             properties_2 = []
-    #             if feature_id_list:
-    #                 # returns found property ids if they satisfy search parameters or raises an exception if non found
-    #                 properties_2 = PropertyHasFeatureService.get_properties_ids_by_filter_parameters(
-    #                     features_id_list=feature_id_list)
-    #             # intersection of properties_1 and properties_2 are ids found which satisfy both conditions
-    #             # since they are a single tuples ,id_tuple[0] is id and here I make a list of properties ids
-    #             if properties_2:
-    #                 properties = [id_tuple[0] for id_tuple in list(set(properties_1).intersection(set(properties_2)))]
-    #                 if properties:
-    #                     ad_repository = AdvertisementRepository(db)
-    #                     return ad_repository.get_active_advertisements_by_property_id_and_type_of_ad_and_price(
-    #                         min_price=min_price, max_price=max_price, type_of_ad=type_of_ad,
-    #                         properties_ids_list=properties)
-    #                 raise AdNotFoundByFilteredParametersException
-    #             else:
-    #                 # if properties_2 is empty
-    #                 properties = [id_tuple[0] for id_tuple in properties_1]
-    #                 ad_repository = AdvertisementRepository(db)
-    #                 return ad_repository.get_active_advertisements_by_property_id_and_type_of_ad_and_price(
-    #                     min_price=min_price, max_price=max_price, type_of_ad=type_of_ad,
-    #                     properties_ids_list=properties)
-    #     except Exception as exc:
-    #         raise exc
     @staticmethod
-    def update_status(clients_id: str, advertisement_id: str, status: str):
+    def update_status(clients_id: str, advertisement_id: str, status: str) -> Advertisement:
+        """
+        It updates the status of an advertisement if the client id of the
+        advertisement is the same as the client id passed in the function
+        """
         try:
             with SessionLocal() as db:
 
@@ -218,7 +211,10 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def update_ad_status_to_expired():
+    def update_ad_status_to_expired() -> list:
+        """
+        It updates the status of all ads that have expired to "expired"
+        """
         try:
             with SessionLocal() as db:
                 ad_repo = AdvertisementRepository(db)
@@ -227,7 +223,10 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def update_pending_status(advertisement_id: str, status: str):
+    def update_pending_status(advertisement_id: str, status: str) -> Advertisement:
+        """
+        It updates the status of an advertisement in the database
+        """
         try:
             with SessionLocal() as db:
                 ad_repo = AdvertisementRepository(db)
@@ -236,7 +235,10 @@ class AdvertisementService:
             raise exc
 
     @staticmethod
-    def get_stats(type_of_ad: Any, type_of_property_id: str, city: str, start_date: str, end_date: str):
+    def get_stats(type_of_ad: Any, status: Any, type_of_property_id: str, city: str, start_date: str, end_date: str):
+        """
+        It gets the stats of the ads based on the given parameters
+        """
         type_of_ad = None if type_of_ad is None else type_of_ad.value
         try:
             start_date = None if start_date is None else datetime.strptime(start_date, "%Y-%m-%d")
@@ -248,9 +250,11 @@ class AdvertisementService:
                 if type_of_property_id:
                     TypeOfPropertyService.get_by_id(type_id=type_of_property_id)
                 ad_repository = AdvertisementRepository(db)
-                result = ad_repository.get_stats(type_of_ad=type_of_ad, type_of_property_id=type_of_property_id,
+                result = ad_repository.get_stats(type_of_ad=type_of_ad, status=status.value,
+                                                 type_of_property_id=type_of_property_id,
                                                  city=city, start_date=start_date, end_date=end_date)
-                return {"number_of_successful_ads": result[0],
+                return {"number_of_ads": result[0],
+                        "status of ad": status,
                         "type_of_property_id": type_of_property_id,
                         "city": city,
                         "average_price_of_property": result[1],
