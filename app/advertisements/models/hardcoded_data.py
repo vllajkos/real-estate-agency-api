@@ -38,3 +38,8 @@ class AdStatus(Enum):
 class SortByPrice(Enum):
     LOW = "from lowest to highest"
     HIGH = "from highest to lowest"
+
+
+class AdStatusUserStat(Enum):
+    ACTIVE = "active"
+    SOLD_RENTED = "sold/rented"

@@ -217,5 +217,26 @@ class AdvertisementRepository:
             query = query.filter(Advertisement.status_date > start_date)
         elif end_date:
             query = query.filter(Advertisement.status_date < end_date)
-        # result is a tuple of two elements, first is an ads number second is an average price of property
+        # result is a tuple of three elements, first is an ads number second is an average price of property
+        # and third is price per sqm
         return query.first()
+
+    def get_by_parameters_for_search(self, type_of_ad: str, status: str, type_of_property_id: str, start_date: date,
+                                     end_date: date) -> list:
+        """
+        Returns list of ads satisfying the requirements
+        """
+        query = self.db.query(Advertisement).join(Property).filter(Advertisement.status == status)
+        if type_of_ad:
+            query = query.filter(Advertisement.type_of_ad == type_of_ad)
+        if type_of_property_id:
+            query = query.filter(Property.type_of_property_id == type_of_property_id)
+        if start_date and end_date:
+            if start_date > end_date:
+                raise EnterValidStartEndDateException
+            query = query.filter(Advertisement.status_date.between(start_date, end_date))
+        elif start_date:
+            query = query.filter(Advertisement.status_date > start_date)
+        elif end_date:
+            query = query.filter(Advertisement.status_date < end_date)
+        return query.all()

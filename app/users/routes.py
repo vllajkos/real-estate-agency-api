@@ -1,6 +1,6 @@
 """ Routes for users, clients, employees and users following ads """
-from fastapi import APIRouter
-from app.users.controller import UserController, ClientController, EmployeeController, FollowController
+from fastapi import APIRouter, Depends
+from app.users.controller import UserController, ClientController, EmployeeController, FollowController, JWTBearer
 from app.users.schemas import UserSchemaIn, UserSchemaOut, UserSchemaLogin, ClientSchemaOut, ClientSchemaIn, \
     EmployeeSchemaIn, EmployeeSchemaOut
 from app.users.schemas import FollowSchema, FollowForClientSchema, FollowForAdSchema
@@ -16,7 +16,7 @@ def create_user(user: UserSchemaIn):
     return UserController.create_user(username=user.username, email=user.email, password=user.password)
 
 
-@user_router.post("/create-superuser", response_model=UserSchemaOut)
+@user_router.post("/create-superuser", response_model=UserSchemaOut, dependencies=[Depends(JWTBearer("superuser"))])
 def create_superuser(user: UserSchemaIn):
     """
     Creates superuser with privileges
@@ -32,7 +32,7 @@ def get_user_by_id(user_id: str):
     return UserController.get_user_by_id(user_id=user_id)
 
 
-@user_router.get("/get-all", response_model=list[UserSchemaOut])
+@user_router.get("/get-all", response_model=list[UserSchemaOut], dependencies=[Depends(JWTBearer("superuser"))])
 def get_all_users():
     """
     Gets all users
@@ -48,7 +48,7 @@ def get_all_active_users():
     return UserController.get_all_active_users()
 
 
-@user_router.delete("/delete-by-id", response_model=None)
+@user_router.delete("/delete-by-id", response_model=None, dependencies=[Depends(JWTBearer("superuser"))])
 def delete_user_by_id(user_id: str):
     """
     Delete a user by id.
@@ -56,7 +56,7 @@ def delete_user_by_id(user_id: str):
     return UserController.delete_user_by_id(user_id=user_id)
 
 
-@user_router.put("/update/active-status", response_model=UserSchemaOut)
+@user_router.put("/update/active-status", response_model=UserSchemaOut, dependencies=[Depends(JWTBearer())])
 def update_user_active_status(user_id: str, active_status: bool):
     """
     Update the active status of a user.
@@ -75,7 +75,7 @@ def login_user(user: UserSchemaLogin):
 client_router = APIRouter(prefix="/api/client", tags=["Client"])
 
 
-@client_router.post("/create-client", response_model=ClientSchemaOut)
+@client_router.post("/create-client", response_model=ClientSchemaOut, dependencies=[Depends(JWTBearer("user"))])
 def create_client(client: ClientSchemaIn):
     """
     Creates client
@@ -108,7 +108,7 @@ def get_client_by_user_id(user_id: str):
     return ClientController.get_client_by_user_id(user_id=user_id)
 
 
-@client_router.put("/update/phone-number", response_model=ClientSchemaOut)
+@client_router.put("/update/phone-number", response_model=ClientSchemaOut, dependencies=[Depends(JWTBearer("user"))])
 def update_clients_phone_number(client_id: str, phone_number: str):
     """
     Update a client's phone number
@@ -119,7 +119,8 @@ def update_clients_phone_number(client_id: str, phone_number: str):
 employee_router = APIRouter(prefix="/api/employee", tags=["Employee"])
 
 
-@employee_router.post("/create-employee", response_model=EmployeeSchemaOut)
+@employee_router.post("/create-employee", response_model=EmployeeSchemaOut,
+                      dependencies=[Depends(JWTBearer("superuser"))])
 def create_employee(employee: EmployeeSchemaIn):
     """
     Creates an employee
@@ -129,7 +130,7 @@ def create_employee(employee: EmployeeSchemaIn):
                                               user_id=employee.user_id)
 
 
-@employee_router.get("/get-all", response_model=list[EmployeeSchemaOut])
+@employee_router.get("/get-all", response_model=list[EmployeeSchemaOut], dependencies=[Depends(JWTBearer())])
 def get_all_employees():
     """
     This function returns all employees
@@ -137,7 +138,7 @@ def get_all_employees():
     return EmployeeController.get_all_employees()
 
 
-@employee_router.get("/get-employee-by-id", response_model=EmployeeSchemaOut)
+@employee_router.get("/get-employee-by-id", response_model=EmployeeSchemaOut, dependencies=[Depends(JWTBearer())])
 def get_employee_by_id(employee_id: str):
     """
     Gets employee by id
@@ -145,7 +146,7 @@ def get_employee_by_id(employee_id: str):
     return EmployeeController.get_employee_by_id(employee_id=employee_id)
 
 
-@employee_router.get("/get-employee-by-user-id", response_model=EmployeeSchemaOut)
+@employee_router.get("/get-employee-by-user-id", response_model=EmployeeSchemaOut, dependencies=[Depends(JWTBearer())])
 def get_employee_by_user_id(user_id: str):
     """
     Gets employee by user id
@@ -153,7 +154,8 @@ def get_employee_by_user_id(user_id: str):
     return EmployeeController.get_employee_by_user_id(user_id=user_id)
 
 
-@employee_router.put("/update/phone-number", response_model=EmployeeSchemaOut)
+@employee_router.put("/update/phone-number", response_model=EmployeeSchemaOut,
+                     dependencies=[Depends(JWTBearer("superuser"))])
 def update_employees_phone_number(employee_id: str, phone_number: str):
     """
     Update the phone number of an employee.
@@ -161,7 +163,8 @@ def update_employees_phone_number(employee_id: str, phone_number: str):
     return EmployeeController.update_employee_phone_number(employee_id=employee_id, phone_number=phone_number)
 
 
-@employee_router.put("/update/job_title", response_model=EmployeeSchemaOut)
+@employee_router.put("/update/job_title", response_model=EmployeeSchemaOut,
+                     dependencies=[Depends(JWTBearer("superuser"))])
 def update_employees_job_title(employee_id: str, job_title: str):
     """
     Update the job title of an employee.
@@ -172,7 +175,7 @@ def update_employees_job_title(employee_id: str, job_title: str):
 follow_router = APIRouter(prefix="/api/follow", tags=["Follow"])
 
 
-@follow_router.post("/create-follow", response_model=FollowSchema)
+@follow_router.post("/create-follow", response_model=FollowSchema, dependencies=[Depends(JWTBearer("user"))])
 def create_follow(follow: FollowSchema):
     """
     Create link between client and desired active advertisement
@@ -180,7 +183,8 @@ def create_follow(follow: FollowSchema):
     return FollowController.create(client_id=follow.client_id, advertisement_id=follow.advertisement_id)
 
 
-@follow_router.get("/get-all-by-client-id", response_model=list[FollowForClientSchema])
+@follow_router.get("/get-all-by-client-id", response_model=list[FollowForClientSchema],
+                   dependencies=[Depends(JWTBearer("user"))])
 def get_all_by_client_id(client_id: str):
     """
     Get all followed advertisements for client(by id)
@@ -188,7 +192,8 @@ def get_all_by_client_id(client_id: str):
     return FollowController.get_all_by_client_id(client_id=client_id)
 
 
-@follow_router.get("/get-all-by-advertisement-id", response_model=list[FollowForAdSchema])
+@follow_router.get("/get-all-by-advertisement-id", response_model=list[FollowForAdSchema],
+                   dependencies=[Depends(JWTBearer("user"))])
 def get_all_by_advertisement_id(advertisement_id: str):
     """
     Get all followers(clients) by advertisement id
@@ -196,7 +201,8 @@ def get_all_by_advertisement_id(advertisement_id: str):
     return FollowController.get_all_by_advertisement_id(advertisement_id=advertisement_id)
 
 
-@follow_router.get("/get-all-by-client-id-and-advertisement-id", response_model=FollowSchema)
+@follow_router.get("/get-all-by-client-id-and-advertisement-id", response_model=FollowSchema,
+                   dependencies=[Depends(JWTBearer("user"))])
 def get_by_client_id_and_advertisement_id(client_id: str, advertisement_id: str):
     """
     Returns  follow object if client is following advertisement
@@ -205,7 +211,7 @@ def get_by_client_id_and_advertisement_id(client_id: str, advertisement_id: str)
                                                                   advertisement_id=advertisement_id)
 
 
-@follow_router.delete("/unfollow", response_model=None)
+@follow_router.delete("/unfollow", response_model=None, dependencies=[Depends(JWTBearer("user"))])
 def delete_follow(client_id: str, advertisement_id: str):
     """
     If client follows an ad, this route unfollows it

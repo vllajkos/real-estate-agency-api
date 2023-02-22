@@ -250,14 +250,51 @@ class AdvertisementService:
                 if type_of_property_id:
                     TypeOfPropertyService.get_by_id(type_id=type_of_property_id)
                 ad_repository = AdvertisementRepository(db)
+                # result is a tuple of 3 elements
                 result = ad_repository.get_stats(type_of_ad=type_of_ad, status=status.value,
                                                  type_of_property_id=type_of_property_id,
                                                  city=city, start_date=start_date, end_date=end_date)
-                return {"number_of_ads": result[0],
-                        "status of ad": status,
+                return {"type_of_ad": type_of_ad,
+                        "number_of_ads": result[0],
+                        "status of ad": status.value,
                         "type_of_property_id": type_of_property_id,
                         "city": city,
                         "average_price_of_property": result[1],
                         "average_square_meter_price": result[2]}
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_stat_on_avg_price_by_city(type_of_ad: Any, status: Any, type_of_property_id: str, start_date: str,
+                                      end_date: str) -> dict:
+        """
+        It gets the stats on average price of square meter for city by search parameters
+        """
+        type_of_ad = None if type_of_ad is None else type_of_ad.value
+        try:
+            start_date = None if start_date is None else datetime.strptime(start_date, "%Y-%m-%d")
+            end_date = None if end_date is None else datetime.strptime(end_date, "%Y-%m-%d")
+        except Exception:
+            raise EnterValidDateFormatException
+        try:
+            with SessionLocal() as db:
+                if type_of_property_id:
+                    TypeOfPropertyService.get_by_id(type_id=type_of_property_id)
+                ad_repository = AdvertisementRepository(db)
+                ads_list = ad_repository.get_by_parameters_for_search(type_of_ad=type_of_ad,
+                                                                      status=status.value,
+                                                                      type_of_property_id=type_of_property_id,
+                                                                      start_date=start_date,
+                                                                      end_date=end_date)
+                city_stats = {}
+                for ad in ads_list:
+                    if ad.property.city in city_stats:
+                        city_stats[ad.property.city][0] += ad.price
+                        city_stats[ad.property.city][1] += ad.property.square_meters
+                    else:
+                        city_stats.setdefault(ad.property.city, [ad.price, ad.property.square_meters])
+                for city, (total_price, total_sqm) in city_stats.items():
+                    city_stats[city] = total_price / total_sqm
+                return city_stats
         except Exception as exc:
             raise exc

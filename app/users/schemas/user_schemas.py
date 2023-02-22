@@ -17,6 +17,7 @@ class UserSchemaIn(BaseModel):
 
 
 class UserSchemaOut(BaseModel):
+    id: str
     username: str
     email: EmailStr
 

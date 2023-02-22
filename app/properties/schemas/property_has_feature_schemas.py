@@ -27,3 +27,10 @@ class PropertyHasFeatureSchemaOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class PropertyHasFeatureSchemaWAVOut(BaseModel):
+    feature: TypeOfFeatureSchemaOut
+
+    class Config:
+        orm_mode = True

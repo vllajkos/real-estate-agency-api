@@ -11,6 +11,7 @@ from app.users.exceptions.custom_user_exception import CustomUserException
 
 class AdvertisementController:
     """Class containing methods for controller layer of advertisement"""
+
     @staticmethod
     def create(type_of_ad: Any, price: float, description: str, property_id: str, client_id: str) -> Advertisement:
         """
@@ -51,6 +52,7 @@ class AdvertisementController:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
+
     @staticmethod
     def get_active_advertisement_by_id(advertisement_id: str) -> list:
         """
@@ -178,6 +180,24 @@ class AdvertisementController:
             content = AdvertisementService.get_stats(type_of_ad=type_of_ad, status=status,
                                                      type_of_property_id=type_of_property_id,
                                                      city=city, start_date=start_date, end_date=end_date)
+            return JSONResponse(content=content)
+        except CustomAdvertisementExceptions as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except CustomPropertyException as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.message)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=exc.__str__())
+
+    @staticmethod
+    def get_stat_on_avg_price_by_city(type_of_ad: Any, status: Any, type_of_property_id: str, start_date: str,
+                                      end_date: str) -> JSONResponse:
+        """
+        It gets the stats on average price of square meter for city by search parameters
+        """
+        try:
+            content = AdvertisementService.get_stat_on_avg_price_by_city(type_of_ad=type_of_ad, status=status,
+                                                                         type_of_property_id=type_of_property_id,
+                                                                         start_date=start_date, end_date=end_date)
             return JSONResponse(content=content)
         except CustomAdvertisementExceptions as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)

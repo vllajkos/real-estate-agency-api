@@ -1,13 +1,16 @@
 """Routes for advertisement"""
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from app.advertisements.controller import AdvertisementController
-from app.advertisements.models.hardcoded_data import TypeOfAd, UserAdStatus, SortByPrice, EmployeeAdStatus, AdStatus
+from app.advertisements.models.hardcoded_data import TypeOfAd, UserAdStatus, SortByPrice, EmployeeAdStatus, AdStatus, \
+    AdStatusUserStat
 from app.advertisements.schemas import AdvertisementSchemaIn, AdvertisementSchemaOut, FilterSchemaIn
+from app.users.controller import JWTBearer
 
 advertisement_router = APIRouter(prefix="/api/advertisement", tags=["Advertisement"])
 
 
-@advertisement_router.post("/create-sale-ad", response_model=AdvertisementSchemaOut)
+@advertisement_router.post("/create-sale-ad", response_model=AdvertisementSchemaOut,
+                           dependencies=[Depends(JWTBearer("user"))])
 def create_sale_advertisement(advertisement: AdvertisementSchemaIn):
     """ Create sale advertisement"""
     return AdvertisementController.create(type_of_ad=TypeOfAd.SALE.value,
@@ -17,7 +20,8 @@ def create_sale_advertisement(advertisement: AdvertisementSchemaIn):
                                           client_id=advertisement.client_id)
 
 
-@advertisement_router.post("/create-rent-ad", response_model=AdvertisementSchemaOut)
+@advertisement_router.post("/create-rent-ad", response_model=AdvertisementSchemaOut,
+                           dependencies=[Depends(JWTBearer("user"))])
 def create_rent_advertisement(advertisement: AdvertisementSchemaIn):
     """ Create rent advertisement"""
     return AdvertisementController.create(type_of_ad=TypeOfAd.RENT.value,
@@ -27,7 +31,8 @@ def create_rent_advertisement(advertisement: AdvertisementSchemaIn):
                                           client_id=advertisement.client_id)
 
 
-@advertisement_router.get("/get-all-on-pending-for-employee", response_model=list[AdvertisementSchemaOut])
+@advertisement_router.get("/get-all-on-pending-for-employee", response_model=list[AdvertisementSchemaOut],
+                          dependencies=[Depends(JWTBearer("superuser"))])
 def get_all_ads_on_pending_for_employee_id(employee_id: str):
     """ Get all ads on pending for employee id"""
     return AdvertisementController.get_all_on_pending_for_employee_id(employee_id=employee_id)
@@ -93,29 +98,68 @@ def get_by_filter_parameters(filter_param: FilterSchemaIn):
                                                             filter_param.features_id_operator_value_list)
 
 
-@advertisement_router.put("/update-ad-status", response_model=AdvertisementSchemaOut)
+@advertisement_router.put("/update-ad-status", response_model=AdvertisementSchemaOut,
+                          dependencies=[Depends(JWTBearer("user"))])
 def update_ad_status_as_user(clients_id: str, advertisement_id: str, status: UserAdStatus):
     """ Update ad status as user"""
     return AdvertisementController.update_ad_status(clients_id=clients_id,
                                                     advertisement_id=advertisement_id, status=status.value)
 
 
-@advertisement_router.put("/update-ad-status-to-expired", response_model=list[AdvertisementSchemaOut])
+@advertisement_router.put("/update-ad-status-to-expired", response_model=list[AdvertisementSchemaOut],
+                          dependencies=[Depends(JWTBearer("superuser"))])
 def update_ad_status_to_expired():
     """ When called automatically changes status for active ads to expired if they are active more than 30 days"""
     return AdvertisementController.update_ad_status_to_expired()
 
 
-@advertisement_router.put("/update-pending-status", response_model=AdvertisementSchemaOut)
+@advertisement_router.put("/update-pending-status", response_model=AdvertisementSchemaOut,
+                          dependencies=[Depends(JWTBearer("superuser"))])
 def update_pending_status(advertisement_id: str, status: EmployeeAdStatus):
     """ Updates pending status for ad by employee"""
     return AdvertisementController.update_pending_status(advertisement_id=advertisement_id, status=status.value)
 
 
-@advertisement_router.get("/get-stats-of-successful-ads", response_model=None)
-def get_stats_of_ads(status: AdStatus, type_of_ad: TypeOfAd = None, type_of_property_id: str = None,
-                     city: str = None, start_date: str = None, end_date: str = None):
-    """ Get stats of ads by given parameters"""
+@advertisement_router.get("/get-stats-for-ads-for-users", response_model=None,
+                          dependencies=[Depends(JWTBearer("user"))])
+def get_stats_of_ads_for_user(status: AdStatusUserStat, type_of_ad: TypeOfAd = None, type_of_property_id: str = None,
+                              city: str = None, start_date: str = None, end_date: str = None):
+    """ Get stats of ads by given parameters for users"""
     return AdvertisementController.get_stats(type_of_ad=type_of_ad, status=status,
                                              type_of_property_id=type_of_property_id,
                                              city=city, start_date=start_date, end_date=end_date)
+
+
+@advertisement_router.get("/get-stats-on-avg-price-for-users", response_model=None,
+                          dependencies=[Depends(JWTBearer("user"))])
+def get_stat_on_avg_price_by_city(status: AdStatusUserStat, type_of_ad: TypeOfAd = None,
+                                  type_of_property_id: str = None,
+                                  start_date: str = None, end_date: str = None):
+    """
+    It gets the stats on average price of square meter for city by search parameters for users
+    """
+    return AdvertisementController.get_stat_on_avg_price_by_city(type_of_ad=type_of_ad, status=status,
+                                                                 type_of_property_id=type_of_property_id,
+                                                                 start_date=start_date, end_date=end_date)
+
+
+@advertisement_router.get("/get-stats-for-ads", response_model=None,
+                          dependencies=[Depends(JWTBearer("superuser"))])
+def get_stats_of_ads(status: AdStatus, type_of_ad: TypeOfAd = None, type_of_property_id: str = None,
+                     city: str = None, start_date: str = None, end_date: str = None):
+    """ Get stats of ads by given parameters for employee"""
+    return AdvertisementController.get_stats(type_of_ad=type_of_ad, status=status,
+                                             type_of_property_id=type_of_property_id,
+                                             city=city, start_date=start_date, end_date=end_date)
+
+
+@advertisement_router.get("/get-stats-on-avg-price", response_model=None,
+                          dependencies=[Depends(JWTBearer("superuser"))])
+def get_stat_on_avg_price_by_city(status: AdStatus, type_of_ad: TypeOfAd = None, type_of_property_id: str = None,
+                                  start_date: str = None, end_date: str = None):
+    """
+    It gets the stats on average price of square meter for city by search parameters for employee
+    """
+    return AdvertisementController.get_stat_on_avg_price_by_city(type_of_ad=type_of_ad, status=status,
+                                                                 type_of_property_id=type_of_property_id,
+                                                                 start_date=start_date, end_date=end_date)

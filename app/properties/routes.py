@@ -1,16 +1,18 @@
 """ Routes for properties, features and their related types"""
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from app.properties.controller import TypeOfPropertyController, TypeOfFeatureController, \
     TypeOfPropertyHasFeatureController, PropertyController, PropertyHasFeatureController
 from app.properties.schemas import TypeOfPropertySchema, TypeOfPropertySchemaIn, TypeOfFeatureSchemaIn, \
     TypeOfFeatureSchemaOut, TypeOfPropertyHasFeatureSchemaIn, PropertySchemaOut, PropertySchemaIn, \
     PropertyHasFeatureSchemaOut, PropertySchemaFilter, PropertyHasFeatureSchemaWithoutAVIn, \
-    PropertyHasFeatureSchemaWithADIn, TypeOfPropertyHasFeatureSchemaOut
+    PropertyHasFeatureSchemaWithADIn, TypeOfPropertyHasFeatureSchemaOut, PropertyHasFeatureSchemaWAVOut
+from app.users.controller import JWTBearer
 
 type_of_property_router = APIRouter(prefix="/api/type-of-property", tags=["Type of property"])
 
 
-@type_of_property_router.post("/create", response_model=TypeOfPropertySchema)
+@type_of_property_router.post("/create", response_model=TypeOfPropertySchema,
+                              dependencies=[Depends(JWTBearer("superuser"))])
 def create_type_of_property(property_type: TypeOfPropertySchemaIn):
     """ Create type of property """
     return TypeOfPropertyController.create(property_type.type_of_property)
@@ -34,7 +36,7 @@ def get_type_of_property_by_id(type_id: str):
     return TypeOfPropertyController.get_by_id(type_id=type_id)
 
 
-@type_of_property_router.delete("/delete-by-id", response_model=None)
+@type_of_property_router.delete("/delete-by-id", response_model=None, dependencies=[Depends(JWTBearer("superuser"))])
 def delete_by_id(type_id: str):
     """ Delete type of property by id """
     return TypeOfPropertyController.delete_by_id(type_id=type_id)
@@ -43,7 +45,8 @@ def delete_by_id(type_id: str):
 type_of_feature_router = APIRouter(prefix="/api/type-of-feature", tags=["Type of feature"])
 
 
-@type_of_feature_router.post("/create", response_model=TypeOfFeatureSchemaOut)
+@type_of_feature_router.post("/create", response_model=TypeOfFeatureSchemaOut,
+                             dependencies=[Depends(JWTBearer("superuser"))])
 def create_type_of_feature(type_of_feature: TypeOfFeatureSchemaIn):
     """ Create type of feature """
     return TypeOfFeatureController.create(feature=type_of_feature.feature,
@@ -75,7 +78,8 @@ def get_features_for_type_of_property(type_of_property_id: str):
     return TypeOfFeatureController.get_features_for_type_of_property(type_id=type_of_property_id)
 
 
-@type_of_feature_router.delete("/delete-by-id", response_model=None)
+@type_of_feature_router.delete("/delete-by-id", response_model=None,
+                               dependencies=[Depends(JWTBearer("superuser"))])
 def delete_by_id(feature_id: str):
     """ Delete type of feature by id """
     return TypeOfFeatureController.delete_by_id(feature_id=feature_id)
@@ -85,7 +89,8 @@ type_of_property_has_type_of_feature_router = APIRouter(prefix="/api/type-of-pro
                                                         tags=["Type of property has type of feature"])
 
 
-@type_of_property_has_type_of_feature_router.post("/create", response_model=TypeOfPropertyHasFeatureSchemaIn)
+@type_of_property_has_type_of_feature_router.post("/create", response_model=TypeOfPropertyHasFeatureSchemaIn,
+                                                  dependencies=[Depends(JWTBearer("superuser"))])
 def create_type_of_property_has_type_of_feature(property_feature: TypeOfPropertyHasFeatureSchemaIn):
     """ Define which type of property can have which type of feature, connect them by their ids """
     return TypeOfPropertyHasFeatureController.create(type_of_property_id=property_feature.type_of_property_id,
@@ -117,7 +122,8 @@ def get_type_of_property_with_all_features_without_optional_values(type_of_prope
         type_id=type_of_property_id, optional_values=False)
 
 
-@type_of_property_has_type_of_feature_router.delete("/delete", response_model=None)
+@type_of_property_has_type_of_feature_router.delete("/delete", response_model=None,
+                                                    dependencies=[Depends(JWTBearer("superuser"))])
 def delete_feature_for_type_of_property_by_ids(type_of_property_id: str, feature_id: str):
     """ Delete feature associated with type of property by their ids """
     return TypeOfPropertyHasFeatureController.delete(type_id=type_of_property_id, feature_id=feature_id)
@@ -126,7 +132,7 @@ def delete_feature_for_type_of_property_by_ids(type_of_property_id: str, feature
 property_router = APIRouter(prefix="/api/property", tags=["Property"])
 
 
-@property_router.post("/create", response_model=PropertySchemaOut)
+@property_router.post("/create", response_model=PropertySchemaOut, dependencies=[Depends(JWTBearer("user"))])
 def create_property(property_: PropertySchemaIn):
     """ Create property """
     return PropertyController.create(street=property_.street, municipality=property_.municipality, city=property_.city,
@@ -178,7 +184,8 @@ property_has_feature_router = APIRouter(prefix="/api/property-has-feature", tags
 
 
 @property_has_feature_router.post("/create-property-has-feature-with-additional-value",
-                                  response_model=PropertyHasFeatureSchemaOut)
+                                  response_model=PropertyHasFeatureSchemaOut,
+                                  dependencies=[Depends(JWTBearer("user"))])
 def create_property_has_feature_with_additional_value(property_feature: PropertyHasFeatureSchemaWithADIn):
     """ Add to existing property feature that have additional value"""
     return PropertyHasFeatureController.create(property_id=property_feature.property_id,
@@ -187,7 +194,8 @@ def create_property_has_feature_with_additional_value(property_feature: Property
 
 
 @property_has_feature_router.post("/create-property-has-feature-without-additional-value",
-                                  response_model=PropertyHasFeatureSchemaOut)
+                                  response_model=PropertyHasFeatureSchemaWAVOut,
+                                  dependencies=[Depends(JWTBearer("user"))])
 def create_property_has_feature_without_additional_value(property_feature: PropertyHasFeatureSchemaWithoutAVIn):
     """ Add to existing property feature without additional value"""
     return PropertyHasFeatureController.create(property_id=property_feature.property_id,
@@ -202,7 +210,8 @@ def get_all_features_for_property_by_id(property_id: str):
     return PropertyHasFeatureController.get_all_features_for_property_by_id(property_id=property_id)
 
 
-@property_has_feature_router.delete("/delete-feature-from-property-by-ids", response_model=None)
+@property_has_feature_router.delete("/delete-feature-from-property-by-ids", response_model=None,
+                                    dependencies=[Depends(JWTBearer("user"))])
 def delete_feature_from_property_by_ids(property_id: str, feature_id: str):
     """ Delete feature from property by their ids """
     return PropertyHasFeatureController.delete_feature_from_property_by_ids(property_id=property_id,
