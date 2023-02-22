@@ -61,20 +61,6 @@ class ClientService:
             return client_repository.get_all_clients()
 
     @staticmethod
-    def delete(client_id: str) -> None:
-        """
-        It deletes a client from the database if the client exists
-        """
-        try:
-            with SessionLocal() as db:
-                client_repository = ClientRepository(db)
-                if client_repository.get_client_by_id(client_id=client_id):
-                    return client_repository.delete(client_id)
-                raise ClientIdDoesntExistException
-        except Exception as exc:
-            raise exc
-
-    @staticmethod
     def update_client_phone_number(client_id: str, phone_number: str) -> Client:
         """
         It updates the phone number of a client with the given client id

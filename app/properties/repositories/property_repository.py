@@ -102,15 +102,3 @@ class PropertyRepository:
         if type_of_property_id:
             query = query.filter(Property.type_of_property_id == type_of_property_id)
         return query.all()
-
-    def delete(self, property_id: str) -> None:
-        """Deletes property"""
-        try:
-            property_ = self.db.query(Property).filter(Property.id == property_id).first()
-            if property_:
-                self.db.delete(property_)
-                self.db.commit()
-                return
-            raise PropertyNotFoundException
-        except Exception as exc:
-            raise exc

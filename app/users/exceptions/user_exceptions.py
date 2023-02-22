@@ -25,3 +25,9 @@ class InvalidPasswordException(CustomUserException):
 class InvalidLoginInfoException(CustomUserException):
     status_code = 401
     message = "Invalid username or email"
+
+
+class CannotDeleteInUseException(CustomUserException):
+    status_code = 400
+    message = "User has been posting ads, so his deletion would compromise data integrity in your database," \
+              "it would be wiser to deactivate his account instead."

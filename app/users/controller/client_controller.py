@@ -57,19 +57,6 @@ class ClientController:
             raise HTTPException(status_code=500, detail=exc.__str__())
 
     @staticmethod
-    def delete_client_by_id(client_id: str) -> JSONResponse:
-        """
-        It deletes a client by id.
-        """
-        try:
-            ClientService.delete(client_id=client_id)
-            return JSONResponse(status_code=200, content=f"Client with provided id {client_id} successfully deleted.")
-        except CustomUserException as exc:
-            raise HTTPException(status_code=exc.status_code, detail=exc.message)
-        except Exception as exc:
-            raise HTTPException(status_code=500, detail=exc.__str__())
-
-    @staticmethod
     def update_clients_phone_number(client_id: str, phone_number: str) -> Client:
         """
         It updates the phone number of a client

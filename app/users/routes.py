@@ -116,14 +116,6 @@ def update_clients_phone_number(client_id: str, phone_number: str):
     return ClientController.update_clients_phone_number(client_id=client_id, phone_number=phone_number)
 
 
-@client_router.delete("/delete-by-id", response_model=None)
-def delete_client_by_id(client_id: str):
-    """
-    Delete a client by id
-    """
-    return ClientController.delete_client_by_id(client_id=client_id)
-
-
 employee_router = APIRouter(prefix="/api/employee", tags=["Employee"])
 
 
@@ -177,14 +169,6 @@ def update_employees_job_title(employee_id: str, job_title: str):
     return EmployeeController.update_employee_job_title(employee_id=employee_id, job_title=job_title)
 
 
-@employee_router.delete("/delete-by-id", response_model=None)
-def delete_employee_by_id(employee_id: str):
-    """
-    Delete an employee by id.
-    """
-    return EmployeeController.delete_employee_by_id(employee_id=employee_id)
-
-
 follow_router = APIRouter(prefix="/api/follow", tags=["Follow"])
 
 
@@ -215,7 +199,7 @@ def get_all_by_advertisement_id(advertisement_id: str):
 @follow_router.get("/get-all-by-client-id-and-advertisement-id", response_model=FollowSchema)
 def get_by_client_id_and_advertisement_id(client_id: str, advertisement_id: str):
     """
-    Returns if follow object if client is following advertisement
+    Returns  follow object if client is following advertisement
     """
     return FollowController.get_by_client_id_and_advertisement_id(client_id=client_id,
                                                                   advertisement_id=advertisement_id)

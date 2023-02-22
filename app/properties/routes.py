@@ -174,12 +174,6 @@ def get_all_properties_by_city(city: str):
     return PropertyController.get_all_properties_by_city(city=city)
 
 
-@property_router.delete("/delete", response_model=None)
-def delete_property_by_id(property_id: str):
-    """ Delete property """
-    return PropertyController.delete(property_id=property_id)
-
-
 property_has_feature_router = APIRouter(prefix="/api/property-has-feature", tags=["Property has feature"])
 
 

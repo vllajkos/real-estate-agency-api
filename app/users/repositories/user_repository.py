@@ -1,7 +1,7 @@
 """User repository layer"""
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from app.users.exceptions import UserIdDoesntExistException
+from app.users.exceptions import UserIdDoesntExistException, CannotDeleteInUseException
 from app.users.models import User
 
 
@@ -81,6 +81,8 @@ class UserRepository:
                 self.db.commit()
                 return
             raise UserIdDoesntExistException
+        except IntegrityError:
+            raise CannotDeleteInUseException
         except Exception as exc:
             raise exc
 

@@ -8,6 +8,7 @@ from app.users.services import EmployeeService
 
 class EmployeeController:
     """Class containing Employee controller methods"""
+
     @staticmethod
     def create_employee(first_name: str, last_name: str, job_title: str, phone_number: str, user_id: str) -> Employee:
         """
@@ -52,19 +53,6 @@ class EmployeeController:
         """
         try:
             return EmployeeService.get_all_employees()
-        except Exception as exc:
-            raise HTTPException(status_code=500, detail=exc.__str__())
-
-    @staticmethod
-    def delete_employee_by_id(employee_id: str) -> JSONResponse:
-        """
-        It deletes an employee by id
-        """
-        try:
-            EmployeeService.delete(employee_id=employee_id)
-            return JSONResponse(status_code=200, content=f"Client with provided id {employee_id} successfully deleted.")
-        except CustomUserException as exc:
-            raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
 

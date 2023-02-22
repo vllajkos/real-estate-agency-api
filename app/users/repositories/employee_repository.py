@@ -8,6 +8,7 @@ from app.users.models import Employee, User
 
 class EmployeeRepository:
     """Class containing employee repository methods for retrieving data from database"""
+
     def __init__(self, db: Session) -> None:
         """Repository object"""
         self.db = db
@@ -42,10 +43,6 @@ class EmployeeRepository:
     def get_employee_by_id(self, employee_id: str) -> Employee | None:
         """
         It returns the first employee with the given id
-
-        :param employee_id: The id of the employee to be retrieved
-        :type employee_id: str
-        :return: The first employee with the given id.
         """
         return self.db.query(Employee).filter(Employee.id == employee_id).first()
 
@@ -54,20 +51,6 @@ class EmployeeRepository:
         It returns all the employees in the database
         """
         return self.db.query(Employee).all()
-
-    def delete(self, employee_id: str) -> None:
-        """
-        It deletes an employee from the database if the employee exists
-        """
-        try:
-            employee = self.db.query(Employee).filter(Employee.id == employee_id).first()
-            if employee:
-                self.db.delete(employee)
-                self.db.commit()
-                return
-            raise EmployeeIdDoesntExistException
-        except Exception as exc:
-            raise exc
 
     def update_employee_phone_number(self, employee_id: str, phone_number: str) -> [Employee]:
         """

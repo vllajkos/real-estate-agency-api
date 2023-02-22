@@ -100,16 +100,3 @@ class PropertyController:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=exc.__str__())
-
-    @staticmethod
-    def delete(property_id: str) -> JSONResponse:
-        """
-        It deletes a property
-        """
-        try:
-            PropertyService.delete(property_id=property_id)
-            return JSONResponse(status_code=200, content="Property successfully deleted")
-        except PropertyNotFoundException as exc:
-            raise HTTPException(status_code=exc.status_code, detail=exc.message)
-        except Exception as exc:
-            raise HTTPException(status_code=500, detail=exc.__str__())

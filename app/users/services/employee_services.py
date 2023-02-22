@@ -9,6 +9,7 @@ from app.users.services import UserService
 
 class EmployeeService:
     """Class containing employee service layer methods"""
+
     @staticmethod
     def create_employee(first_name: str, last_name: str, job_title: str, phone_number: str, user_id: str) -> Employee:
         """
@@ -74,20 +75,6 @@ class EmployeeService:
         with SessionLocal() as db:
             employee_repository = EmployeeRepository(db)
             return employee_repository.get_all_employees()
-
-    @staticmethod
-    def delete(employee_id: str) -> None:
-        """
-        It deletes an employee from the database if the employee exists
-        """
-        try:
-            with SessionLocal() as db:
-                employee_repository = EmployeeRepository(db)
-                if employee_repository.get_employee_by_id(employee_id=employee_id):
-                    return employee_repository.delete(employee_id)
-                raise EmployeeIdDoesntExistException
-        except Exception as exc:
-            raise exc
 
     @staticmethod
     def update_employee_phone_number(employee_id: str, phone_number: str) -> Employee:

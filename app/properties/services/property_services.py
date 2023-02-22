@@ -133,13 +133,3 @@ class PropertyService:
                 raise PropertiesNotFoundByFilterParametersException
         except Exception as exc:
             raise exc
-
-    @staticmethod
-    def delete(property_id: str) -> None:
-        """Deletes property by id"""
-        try:
-            with SessionLocal() as db:
-                property_repo = PropertyRepository(db)
-                property_repo.delete(property_id=property_id)
-        except Exception as exc:
-            raise exc

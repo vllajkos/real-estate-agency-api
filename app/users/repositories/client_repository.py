@@ -44,20 +44,6 @@ class ClientRepository:
         """
         return self.db.query(Client).all()
 
-    def delete(self, client_id: str) -> None:
-        """
-        It deletes a client from the database if the client exists
-        """
-        try:
-            client = self.db.query(Client).filter(Client.id == client_id).first()
-            if client:
-                self.db.delete(client)
-                self.db.commit()
-                return
-            raise ClientIdDoesntExistException
-        except Exception as exc:
-            raise exc
-
     def update_client_phone_number(self, client_id: str, phone_number: str) -> [Client]:
         """
         It updates the phone number of a client in the database
