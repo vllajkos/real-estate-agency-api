@@ -1,14 +1,19 @@
 """Type of property controller layer"""
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
-from app.properties.exceptions import TypeOfPropertyExistsException, TypeOfPropertyDoesntExistException, \
-    CustomPropertyException
+
+from app.properties.exceptions import (
+    CustomPropertyException,
+    TypeOfPropertyDoesntExistException,
+    TypeOfPropertyExistsException,
+)
 from app.properties.models import TypeOfProperty
 from app.properties.services import TypeOfPropertyService
 
 
 class TypeOfPropertyController:
     """Class containing Type of property controller methods"""
+
     @staticmethod
     def create(type_of_property: str) -> TypeOfProperty:
         """

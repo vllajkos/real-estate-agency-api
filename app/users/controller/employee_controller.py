@@ -1,6 +1,7 @@
 """Employee controller layer"""
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
+
 from app.users.exceptions import CustomUserException
 from app.users.models import Employee
 from app.users.services import EmployeeService
@@ -15,8 +16,13 @@ class EmployeeController:
         It creates an employee
         """
         try:
-            return EmployeeService.create_employee(first_name=first_name, last_name=last_name, job_title=job_title,
-                                                   phone_number=phone_number, user_id=user_id)
+            return EmployeeService.create_employee(
+                first_name=first_name,
+                last_name=last_name,
+                job_title=job_title,
+                phone_number=phone_number,
+                user_id=user_id,
+            )
         except CustomUserException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:

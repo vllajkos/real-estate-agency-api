@@ -1,5 +1,5 @@
 """Type of feature Schemas"""
-from pydantic import BaseModel, UUID4, StrictStr
+from pydantic import UUID4, BaseModel, StrictStr
 
 
 class TypeOfFeatureSchemaOut(BaseModel):

@@ -1,8 +1,9 @@
 """
 Model of relationship between concrete property made by user and features contained by property
 """
-from sqlalchemy import Column, String, ForeignKey, PrimaryKeyConstraint, Integer
+from sqlalchemy import Column, ForeignKey, Integer, PrimaryKeyConstraint, String
 from sqlalchemy.orm import relationship
+
 from app.db import Base
 
 

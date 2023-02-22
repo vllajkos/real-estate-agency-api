@@ -1,6 +1,7 @@
 """Follow controller layer"""
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
+
 from app.users.exceptions import CustomUserException
 from app.users.models import Follow
 from app.users.services import FollowService
@@ -8,6 +9,7 @@ from app.users.services import FollowService
 
 class FollowController:
     """Class containing Follow controller methods"""
+
     @staticmethod
     def create(client_id: str, advertisement_id: str) -> Follow:
         """
@@ -46,8 +48,9 @@ class FollowController:
         It gets a follow by client id and advertisement id
         """
         try:
-            return FollowService.get_by_client_id_and_advertisement_id(client_id=client_id,
-                                                                       advertisement_id=advertisement_id)
+            return FollowService.get_by_client_id_and_advertisement_id(
+                client_id=client_id, advertisement_id=advertisement_id
+            )
         except CustomUserException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
 
@@ -58,8 +61,9 @@ class FollowController:
         """
         try:
             FollowService.delete(client_id=client_id, advertisement_id=advertisement_id)
-            return JSONResponse(status_code=200, content=f"Client id {client_id} unfollowed"
-                                                         f" advertisement id {advertisement_id} ")
+            return JSONResponse(
+                status_code=200, content=f"Client id {client_id} unfollowed" f" advertisement id {advertisement_id} "
+            )
         except CustomUserException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:

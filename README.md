@@ -2,10 +2,34 @@
 
 FastAPI project that is based on a MySQL database and consists of endpoints for a real estate agency.
 These endpoints would allow the agency and its workers to post and approve ads, among other functionalities.
-The project would enable property owners to register and offer their properties to the agency, 
+The project would enable property owners to register and offer their properties to the agency,
 and potential buyers or renters to view available properties and add them to their wishlist.
 The advertisements would contain detailed information about the property, the owner, and the price,
 and filtering options would be available for ads.
+
+## Quick Guide
+
+### Type of Property
+Represents the various types of properties that are available.
+
+### Type of Feature
+Represents the different features that properties can have, including an optional value parameter for features that require additional information.
+
+### Type of Property has Type of Feature
+Specifies which types of properties can have particular features.
+
+### Property
+Describes a specific property and its attributes, including a foreign key from the Type of Property table.
+
+### Property has Feature
+Link features to specific property and records additional values for features that require them.
+
+### Users, Clients, Employees
+In order to carry out certain actions, such as creating advertisements or accessing advertising metrics, users and clients must be registered.
+Users can also follow other advertisements, while employees are responsible for managing property types and features, as well as approving new ads.
+
+### Advertisement
+Comprises a property, client ID, and assigned employee, along with information about price, admission date, and status.
 
 ## Installation
 
@@ -72,7 +96,3 @@ uvicorn app.main:app --reload --reload-delay 5 --host localhost --port 8000
 
 Pull requests are welcome. For major changes, please open an issue first
 to discuss what you would like to change.
-
-## License
-
-[GNU](https://www.gnu.org/licenses/gpl-3.0.en.html)

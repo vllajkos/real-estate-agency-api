@@ -1,14 +1,16 @@
 """Repository layer for types of features"""
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from app.properties.exceptions import TypeOfFeatureDoesntExistException, TypeOfFeatureDeleteException
+
+from app.properties.exceptions import TypeOfFeatureDeleteException, TypeOfFeatureDoesntExistException
 from app.properties.models import TypeOfFeature, TypeOfPropertyHasFeature
 
 
 class TypeOfFeatureRepository:
     """Repository layer containing crud methods for type of feature"""
+
     def __init__(self, db: Session) -> None:
-        """ Model of repository object"""
+        """Model of repository object"""
         self.db = db
 
     def create(self, feature: str, optional_values: bool) -> TypeOfFeature:
@@ -45,7 +47,7 @@ class TypeOfFeatureRepository:
 
     def get_by_id(self, feature_id: str) -> TypeOfFeature | None:
         """
-         This function returns the first feature in the database that matches the feature_id
+        This function returns the first feature in the database that matches the feature_id
         """
         return self.db.query(TypeOfFeature).filter(TypeOfFeature.id == feature_id).first()
 
@@ -53,8 +55,12 @@ class TypeOfFeatureRepository:
         """
         It returns all the features for a given type of property
         """
-        return self.db.query(TypeOfFeature).join(TypeOfPropertyHasFeature).filter(
-            TypeOfPropertyHasFeature.type_of_property_id == type_of_property_id).all()
+        return (
+            self.db.query(TypeOfFeature)
+            .join(TypeOfPropertyHasFeature)
+            .filter(TypeOfPropertyHasFeature.type_of_property_id == type_of_property_id)
+            .all()
+        )
 
     def delete_by_id(self, feature_id: str) -> bool:
         """

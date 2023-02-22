@@ -1,14 +1,21 @@
 """User service layer"""
 import hashlib
+
 from app.db.database import SessionLocal
-from app.users.exceptions import InvalidUsernameException, InvalidEmailException, UserIdDoesntExistException, \
-    InvalidPasswordException, InvalidLoginInfoException
+from app.users.exceptions import (
+    InvalidEmailException,
+    InvalidLoginInfoException,
+    InvalidPasswordException,
+    InvalidUsernameException,
+    UserIdDoesntExistException,
+)
 from app.users.models import User
 from app.users.repositories.user_repository import UserRepository
 
 
 class UserService:
     """Class containing user service layer methods"""
+
     @staticmethod
     def create_user(username: str, email: str, password: str) -> User:
         """

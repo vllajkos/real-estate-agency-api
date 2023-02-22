@@ -1,6 +1,8 @@
 """Property has feature Schemas"""
 from typing import Optional
-from pydantic import PositiveInt, BaseModel
+
+from pydantic import BaseModel, PositiveInt
+
 from app.properties.schemas import TypeOfFeatureSchemaOut
 
 

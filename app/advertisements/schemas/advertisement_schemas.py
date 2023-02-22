@@ -1,7 +1,9 @@
 """Advertisement schemas"""
 from datetime import date
 from typing import Optional
+
 from pydantic import BaseModel, PositiveFloat, PositiveInt
+
 from app.properties.schemas import PropertySchemaOut
 from app.users.schemas import ClientSchemaOut
 

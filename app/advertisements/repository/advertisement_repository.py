@@ -1,10 +1,18 @@
 """Repository layer of Advertisement"""
-from datetime import timedelta, date
+from datetime import date, timedelta
+
 from sqlalchemy import desc, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
-from app.advertisements.exceptions import MinMaxPriceException, AdvertisementNoLongerActiveException, \
-    AdvertisementIdDoesntExistException, NoExpiredAdsException, AdNotPendingException, EnterValidStartEndDateException
+
+from app.advertisements.exceptions import (
+    AdNotPendingException,
+    AdvertisementIdDoesntExistException,
+    AdvertisementNoLongerActiveException,
+    EnterValidStartEndDateException,
+    MinMaxPriceException,
+    NoExpiredAdsException,
+)
 from app.advertisements.models import Advertisement
 from app.advertisements.models.hardcoded_data import EXPIRES_IN_DAYS, AdStatus, SortByPrice
 from app.properties.models import Property
@@ -14,17 +22,24 @@ class AdvertisementRepository:
     """Class representing advertisement repository layer with session object for connection to database"""
 
     def __init__(self, db: Session):
-        """ Model for Advertisement repository object"""
+        """Model for Advertisement repository object"""
         self.db = db
 
-    def create(self, type_of_ad: str, price: float, description: str, property_id: str, client_id: str,
-               employee_id: str) -> Advertisement:
+    def create(
+        self, type_of_ad: str, price: float, description: str, property_id: str, client_id: str, employee_id: str
+    ) -> Advertisement:
         """
         It creates an advertisement object and adds it to the database
         """
         try:
-            advertisement = Advertisement(type_of_ad=type_of_ad, price=price, description=description,
-                                          property_id=property_id, client_id=client_id, employee_id=employee_id)
+            advertisement = Advertisement(
+                type_of_ad=type_of_ad,
+                price=price,
+                description=description,
+                property_id=property_id,
+                client_id=client_id,
+                employee_id=employee_id,
+            )
             self.db.add(advertisement)
             self.db.commit()
             self.db.refresh(advertisement)
@@ -36,15 +51,21 @@ class AdvertisementRepository:
         """
         It returns all advertisements that have a status of PENDING for employee id
         """
-        return self.db.query(Advertisement).filter((Advertisement.employee_id == employee_id) &
-                                                   (Advertisement.status == AdStatus.PENDING.value)).all()
+        return (
+            self.db.query(Advertisement)
+            .filter((Advertisement.employee_id == employee_id) & (Advertisement.status == AdStatus.PENDING.value))
+            .all()
+        )
 
     def get_all_active_for_client_id(self, client_id: str) -> list:
         """
         It returns all the active advertisements for a given client id
         """
-        return self.db.query(Advertisement).filter((Advertisement.client_id == client_id) &
-                                                   (Advertisement.status == AdStatus.ACTIVE.value)).all()
+        return (
+            self.db.query(Advertisement)
+            .filter((Advertisement.client_id == client_id) & (Advertisement.status == AdStatus.ACTIVE.value))
+            .all()
+        )
 
     def get_ad_by_id(self, advertisement_id: str) -> [Advertisement]:
         """
@@ -70,12 +91,17 @@ class AdvertisementRepository:
         """
         # I used options(joined load) to load property object to advertisement in a single query rather than to
         # access them separately
-        return self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)). \
-            filter(Advertisement.property_id == property_id).all()
+        return (
+            self.db.query(Advertisement)
+            .join(Property)
+            .options(joinedload(Advertisement.property))
+            .filter(Advertisement.property_id == property_id)
+            .all()
+        )
 
-    def get_active_advertisements_by_property_id_and_type_of_ad_and_price(self, min_price: float, max_price: float,
-                                                                          properties_ids_list: list[str],
-                                                                          type_of_ad: str = None) -> list:
+    def get_active_advertisements_by_property_id_and_type_of_ad_and_price(
+        self, min_price: float, max_price: float, properties_ids_list: list[str], type_of_ad: str = None
+    ) -> list:
         """
         Get active advertisements by parameters
         """
@@ -99,38 +125,65 @@ class AdvertisementRepository:
         """
         It returns all active advertisements, and for each advertisement, it loads the property object
         """
-        return self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)). \
-            filter(Advertisement.status == AdStatus.ACTIVE.value).all()
+        return (
+            self.db.query(Advertisement)
+            .join(Property)
+            .options(joinedload(Advertisement.property))
+            .filter(Advertisement.status == AdStatus.ACTIVE.value)
+            .all()
+        )
 
     def get_all_active_ads_by_type_of_ad_sorted(self, type_of_ad: str, sort_: str) -> list:
         """
         It returns all active ads of a given type, sorted by price in ascending or descending order
         """
-        query = self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)) \
+        query = (
+            self.db.query(Advertisement)
+            .join(Property)
+            .options(joinedload(Advertisement.property))
             .filter((Advertisement.type_of_ad == type_of_ad) & (Advertisement.status == AdStatus.ACTIVE.value))
+        )
         if sort_ == SortByPrice.LOW.value:
             query = query.order_by(Advertisement.price.asc())
         elif sort_ == SortByPrice.HIGH.value:
             query = query.order_by(desc(Advertisement.price))
         return query.all()
 
-    def get_all_active_ads_by_type_of_ad_and_type_of_property_id(self, type_of_ad: str,
-                                                                 type_of_property_id: str) -> list:
+    def get_all_active_ads_by_type_of_ad_and_type_of_property_id(
+        self, type_of_ad: str, type_of_property_id: str
+    ) -> list:
         """
         It returns all active ads that have a specific type of ad and a specific type of property id
         """
-        return self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)). \
-            filter((Advertisement.type_of_ad == type_of_ad) & (Property.type_of_property_id == type_of_property_id) &
-                   (Advertisement.status == AdStatus.ACTIVE.value)).all()
+        return (
+            self.db.query(Advertisement)
+            .join(Property)
+            .options(joinedload(Advertisement.property))
+            .filter(
+                (Advertisement.type_of_ad == type_of_ad)
+                & (Property.type_of_property_id == type_of_property_id)
+                & (Advertisement.status == AdStatus.ACTIVE.value)
+            )
+            .all()
+        )
 
     def get_all_by_ad_and_property_types_and_city(self, type_of_ad: str, type_of_property_id: str, city: str) -> list:
         """
         It returns all the advertisements that have a specific type of ad,
         a specific type of property and a specific city
         """
-        return self.db.query(Advertisement).join(Property).options(joinedload(Advertisement.property)). \
-            filter((Advertisement.type_of_ad == type_of_ad) & (Property.type_of_property_id == type_of_property_id) &
-                   (Property.city == city) & (Advertisement.status == AdStatus.ACTIVE.value)).all()
+        return (
+            self.db.query(Advertisement)
+            .join(Property)
+            .options(joinedload(Advertisement.property))
+            .filter(
+                (Advertisement.type_of_ad == type_of_ad)
+                & (Property.type_of_property_id == type_of_property_id)
+                & (Property.city == city)
+                & (Advertisement.status == AdStatus.ACTIVE.value)
+            )
+            .all()
+        )
 
     def get_clients_id_by_advertisement_id(self, advertisement_id: str) -> Advertisement | None:
         """
@@ -159,8 +212,11 @@ class AdvertisementRepository:
         """
         try:
             end_date = date.today() - timedelta(days=EXPIRES_IN_DAYS)
-            ads_list = self.db.query(Advertisement).filter((Advertisement.status == AdStatus.ACTIVE.value) &
-                                                           (Advertisement.status_date <= end_date)).all()
+            ads_list = (
+                self.db.query(Advertisement)
+                .filter((Advertisement.status == AdStatus.ACTIVE.value) & (Advertisement.status_date <= end_date))
+                .all()
+            )
             if ads_list:
                 expired_ads = []
                 for ad in ads_list:
@@ -193,16 +249,22 @@ class AdvertisementRepository:
         except Exception as exc:
             raise exc
 
-    def get_stats(self, type_of_ad: str, status: str, type_of_property_id: str, city: str, start_date: date,
-                  end_date: date) -> tuple | None:
+    def get_stats(
+        self, type_of_ad: str, status: str, type_of_property_id: str, city: str, start_date: date, end_date: date
+    ) -> tuple | None:
         """
         It returns a tuple of three elements: number of ads, average price of ads and
          average price per square meter of ads
         """
-        query = self.db.query(func.count(Advertisement.id),
-                              func.avg(Advertisement.price),
-                              func.avg(Advertisement.price) / func.avg(Property.square_meters)).join(Property). \
-            filter(Advertisement.status == status)
+        query = (
+            self.db.query(
+                func.count(Advertisement.id),
+                func.avg(Advertisement.price),
+                func.avg(Advertisement.price) / func.avg(Property.square_meters),
+            )
+            .join(Property)
+            .filter(Advertisement.status == status)
+        )
         if type_of_ad:
             query = query.filter(Advertisement.type_of_ad == type_of_ad)
         if type_of_property_id:
@@ -221,8 +283,9 @@ class AdvertisementRepository:
         # and third is price per sqm
         return query.first()
 
-    def get_by_parameters_for_search(self, type_of_ad: str, status: str, type_of_property_id: str, start_date: date,
-                                     end_date: date) -> list:
+    def get_by_parameters_for_search(
+        self, type_of_ad: str, status: str, type_of_property_id: str, start_date: date, end_date: date
+    ) -> list:
         """
         Returns list of ads satisfying the requirements
         """

@@ -1,6 +1,8 @@
 """Property Schemas"""
 from typing import Optional
-from pydantic import BaseModel, UUID4, PositiveFloat, StrictStr, NonNegativeFloat
+
+from pydantic import UUID4, BaseModel, NonNegativeFloat, PositiveFloat, StrictStr
+
 from app.properties.schemas import TypeOfPropertySchema
 from app.properties.schemas.property_has_feature_schemas import PropertyHasFeatureSchemaOut
 

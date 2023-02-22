@@ -1,12 +1,15 @@
 """Model of a Client"""
 from uuid import uuid4
-from sqlalchemy import Column, String, ForeignKey
+
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import relationship
+
 from app.db import Base
 
 
 class Client(Base):
     """Defining a table for clients"""
+
     __tablename__ = "clients"
     id = Column(String(36), primary_key=True, default=uuid4)
     first_name = Column(String(30), nullable=False)
@@ -14,7 +17,7 @@ class Client(Base):
     phone_number = Column(String(50))
 
     user_id = Column(String(36), ForeignKey("users.id"), unique=True)
-    user = relationship("User", lazy='subquery')
+    user = relationship("User", lazy="subquery")
 
     def __init__(self, first_name: str, last_name: str, phone_number: str, user_id: str) -> None:
         """Model of a Client object"""

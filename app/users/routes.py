@@ -1,9 +1,19 @@
 """ Routes for users, clients, employees and users following ads """
 from fastapi import APIRouter, Depends
-from app.users.controller import UserController, ClientController, EmployeeController, FollowController, JWTBearer
-from app.users.schemas import UserSchemaIn, UserSchemaOut, UserSchemaLogin, ClientSchemaOut, ClientSchemaIn, \
-    EmployeeSchemaIn, EmployeeSchemaOut
-from app.users.schemas import FollowSchema, FollowForClientSchema, FollowForAdSchema
+
+from app.users.controller import ClientController, EmployeeController, FollowController, JWTBearer, UserController
+from app.users.schemas import (
+    ClientSchemaIn,
+    ClientSchemaOut,
+    EmployeeSchemaIn,
+    EmployeeSchemaOut,
+    FollowForAdSchema,
+    FollowForClientSchema,
+    FollowSchema,
+    UserSchemaIn,
+    UserSchemaLogin,
+    UserSchemaOut,
+)
 
 user_router = APIRouter(prefix="/api/user", tags=["User"])
 
@@ -80,8 +90,12 @@ def create_client(client: ClientSchemaIn):
     """
     Creates client
     """
-    return ClientController.create_client(first_name=client.first_name, last_name=client.last_name,
-                                          phone_number=client.phone_number, user_id=client.user_id)
+    return ClientController.create_client(
+        first_name=client.first_name,
+        last_name=client.last_name,
+        phone_number=client.phone_number,
+        user_id=client.user_id,
+    )
 
 
 @client_router.get("/get-all", response_model=list[ClientSchemaOut])
@@ -119,15 +133,20 @@ def update_clients_phone_number(client_id: str, phone_number: str):
 employee_router = APIRouter(prefix="/api/employee", tags=["Employee"])
 
 
-@employee_router.post("/create-employee", response_model=EmployeeSchemaOut,
-                      dependencies=[Depends(JWTBearer("superuser"))])
+@employee_router.post(
+    "/create-employee", response_model=EmployeeSchemaOut, dependencies=[Depends(JWTBearer("superuser"))]
+)
 def create_employee(employee: EmployeeSchemaIn):
     """
     Creates an employee
     """
-    return EmployeeController.create_employee(first_name=employee.first_name, last_name=employee.last_name,
-                                              job_title=employee.job_title, phone_number=employee.phone_number,
-                                              user_id=employee.user_id)
+    return EmployeeController.create_employee(
+        first_name=employee.first_name,
+        last_name=employee.last_name,
+        job_title=employee.job_title,
+        phone_number=employee.phone_number,
+        user_id=employee.user_id,
+    )
 
 
 @employee_router.get("/get-all", response_model=list[EmployeeSchemaOut], dependencies=[Depends(JWTBearer())])
@@ -154,8 +173,9 @@ def get_employee_by_user_id(user_id: str):
     return EmployeeController.get_employee_by_user_id(user_id=user_id)
 
 
-@employee_router.put("/update/phone-number", response_model=EmployeeSchemaOut,
-                     dependencies=[Depends(JWTBearer("superuser"))])
+@employee_router.put(
+    "/update/phone-number", response_model=EmployeeSchemaOut, dependencies=[Depends(JWTBearer("superuser"))]
+)
 def update_employees_phone_number(employee_id: str, phone_number: str):
     """
     Update the phone number of an employee.
@@ -163,8 +183,9 @@ def update_employees_phone_number(employee_id: str, phone_number: str):
     return EmployeeController.update_employee_phone_number(employee_id=employee_id, phone_number=phone_number)
 
 
-@employee_router.put("/update/job_title", response_model=EmployeeSchemaOut,
-                     dependencies=[Depends(JWTBearer("superuser"))])
+@employee_router.put(
+    "/update/job_title", response_model=EmployeeSchemaOut, dependencies=[Depends(JWTBearer("superuser"))]
+)
 def update_employees_job_title(employee_id: str, job_title: str):
     """
     Update the job title of an employee.
@@ -183,8 +204,9 @@ def create_follow(follow: FollowSchema):
     return FollowController.create(client_id=follow.client_id, advertisement_id=follow.advertisement_id)
 
 
-@follow_router.get("/get-all-by-client-id", response_model=list[FollowForClientSchema],
-                   dependencies=[Depends(JWTBearer("user"))])
+@follow_router.get(
+    "/get-all-by-client-id", response_model=list[FollowForClientSchema], dependencies=[Depends(JWTBearer("user"))]
+)
 def get_all_by_client_id(client_id: str):
     """
     Get all followed advertisements for client(by id)
@@ -192,8 +214,9 @@ def get_all_by_client_id(client_id: str):
     return FollowController.get_all_by_client_id(client_id=client_id)
 
 
-@follow_router.get("/get-all-by-advertisement-id", response_model=list[FollowForAdSchema],
-                   dependencies=[Depends(JWTBearer("user"))])
+@follow_router.get(
+    "/get-all-by-advertisement-id", response_model=list[FollowForAdSchema], dependencies=[Depends(JWTBearer("user"))]
+)
 def get_all_by_advertisement_id(advertisement_id: str):
     """
     Get all followers(clients) by advertisement id
@@ -201,14 +224,16 @@ def get_all_by_advertisement_id(advertisement_id: str):
     return FollowController.get_all_by_advertisement_id(advertisement_id=advertisement_id)
 
 
-@follow_router.get("/get-all-by-client-id-and-advertisement-id", response_model=FollowSchema,
-                   dependencies=[Depends(JWTBearer("user"))])
+@follow_router.get(
+    "/get-all-by-client-id-and-advertisement-id", response_model=FollowSchema, dependencies=[Depends(JWTBearer("user"))]
+)
 def get_by_client_id_and_advertisement_id(client_id: str, advertisement_id: str):
     """
     Returns  follow object if client is following advertisement
     """
-    return FollowController.get_by_client_id_and_advertisement_id(client_id=client_id,
-                                                                  advertisement_id=advertisement_id)
+    return FollowController.get_by_client_id_and_advertisement_id(
+        client_id=client_id, advertisement_id=advertisement_id
+    )
 
 
 @follow_router.delete("/unfollow", response_model=None, dependencies=[Depends(JWTBearer("user"))])

@@ -1,8 +1,14 @@
 """Follow service layer"""
 from sqlalchemy.exc import IntegrityError
+
 from app.db import SessionLocal
-from app.users.exceptions import FollowExistException, ClientsFollowingsException, AdFollowingsException, \
-    FollowDoesntExistException, AdOrClientDoesntExistException
+from app.users.exceptions import (
+    AdFollowingsException,
+    AdOrClientDoesntExistException,
+    ClientsFollowingsException,
+    FollowDoesntExistException,
+    FollowExistException,
+)
 from app.users.models import Follow
 from app.users.repositories import FollowRepository
 from app.users.services import ClientService
@@ -10,6 +16,7 @@ from app.users.services import ClientService
 
 class FollowService:
     """Class containing follow service methods"""
+
     @staticmethod
     def create(client_id: str, advertisement_id: str) -> Follow:
         """
@@ -19,8 +26,9 @@ class FollowService:
         try:
             with SessionLocal() as db:
                 follow_repo = FollowRepository(db)
-                if not follow_repo.get_by_client_id_and_advertisement_id(client_id=client_id,
-                                                                         advertisement_id=advertisement_id):
+                if not follow_repo.get_by_client_id_and_advertisement_id(
+                    client_id=client_id, advertisement_id=advertisement_id
+                ):
                     return follow_repo.create(client_id=client_id, advertisement_id=advertisement_id)
                 raise FollowExistException
         except IntegrityError:
@@ -60,8 +68,9 @@ class FollowService:
         """
         with SessionLocal() as db:
             follow_repo = FollowRepository(db)
-            follows = follow_repo.get_by_client_id_and_advertisement_id(client_id=client_id,
-                                                                        advertisement_id=advertisement_id)
+            follows = follow_repo.get_by_client_id_and_advertisement_id(
+                client_id=client_id, advertisement_id=advertisement_id
+            )
             if follows:
                 return follows
             raise FollowDoesntExistException

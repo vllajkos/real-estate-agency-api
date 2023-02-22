@@ -1,12 +1,16 @@
 """Property has feature service layer"""
 from app.advertisements.models import MoreLessEqual
 from app.db import SessionLocal
-from app.properties.exceptions import PropertyAlreadyHasThatFeatureException, \
-    TypeOfFeatureDoesntSupportAdditionalValueException, PropertyDoesntHaveFeaturesException, \
-    PropertyDoesntHaveRequestedFeatureException, PropertiesNotFoundByFilterParametersException
+from app.properties.exceptions import (
+    PropertiesNotFoundByFilterParametersException,
+    PropertyAlreadyHasThatFeatureException,
+    PropertyDoesntHaveFeaturesException,
+    PropertyDoesntHaveRequestedFeatureException,
+    TypeOfFeatureDoesntSupportAdditionalValueException,
+)
 from app.properties.models import PropertyHasFeature
 from app.properties.repositories import PropertyHasFeatureRepository
-from app.properties.services import TypeOfFeatureService, PropertyService
+from app.properties.services import PropertyService, TypeOfFeatureService
 from app.properties.services import TypeOfPropertyHasFeatureService as CheckFeatureSupport
 
 
@@ -15,8 +19,8 @@ class PropertyHasFeatureService:
 
     @staticmethod
     def create(property_id: str, feature_id: str, additional_feature_value: int) -> PropertyHasFeature:
-        """ This method creates a bond between concrete property created by user and features available for that
-        concrete type of property which user can add to his property if feature is supported by type of property """
+        """This method creates a bond between concrete property created by user and features available for that
+        concrete type of property which user can add to his property if feature is supported by type of property"""
         try:
             with SessionLocal() as db:
                 # this checks if property_id exists in database
@@ -26,15 +30,17 @@ class PropertyHasFeatureService:
                 if not TypeOfFeatureService.get_optional_value_by_feature_id(feature_id=feature_id)[0]:
                     # need to check if feature is supported for type of property
                     CheckFeatureSupport.get_type_of_property_and_type_of_feature_by_ids(
-                        type_of_property_id=property_.type_of_property_id, feature_id=feature_id)
+                        type_of_property_id=property_.type_of_property_id, feature_id=feature_id
+                    )
                     # if additional value is given raises an exception
                     if additional_feature_value:
                         raise TypeOfFeatureDoesntSupportAdditionalValueException
                 property_feature = PropertyHasFeatureRepository(db=db)
                 if property_feature.get_property_with_feature_by_ids(property_id=property_id, feature_id=feature_id):
                     raise PropertyAlreadyHasThatFeatureException
-                return property_feature.create(property_id=property_id, feature_id=feature_id,
-                                               additional_feature_value=additional_feature_value)
+                return property_feature.create(
+                    property_id=property_id, feature_id=feature_id, additional_feature_value=additional_feature_value
+                )
         except Exception as exc:
             raise exc
 
@@ -65,7 +71,8 @@ class PropertyHasFeatureService:
             with SessionLocal() as db:
                 property_feature_repo = PropertyHasFeatureRepository(db)
                 properties_ids = property_feature_repo.get_properties_ids_by_filter_parameters(
-                    features_id_list=features_id_list)
+                    features_id_list=features_id_list
+                )
                 if properties_ids:
                     return properties_ids
                 raise PropertiesNotFoundByFilterParametersException
@@ -89,7 +96,8 @@ class PropertyHasFeatureService:
                 # giving that list to repository to return properties that contain at least one of those features
                 # by checking if property has at least one feature from that list
                 property_has_feature_list = property_feature_repo.get_properties_by_features_list(
-                    features_id_list=feature_id_list)
+                    features_id_list=feature_id_list
+                )
                 properties_id_dict = {}
                 # unpacking tuples from feature_id_operator_value_list
                 for filter_feature_id, operator, filter_value in features_id_operator_value_list:
@@ -125,9 +133,12 @@ class PropertyHasFeatureService:
                 # property ids that have passed all searching parameters by comparing value which represents
                 # number of passed filters vs number of provided filters
                 # if it is the same as  number than property id is added to the list
-                properties_ids_list = [(property_id,) for property_id, value in properties_id_dict.items()
-                                       if properties_id_dict[property_has_feature_object.property_id] == len(
-                        features_id_operator_value_list)]
+                properties_ids_list = [
+                    (property_id,)
+                    for property_id, value in properties_id_dict.items()
+                    if properties_id_dict[property_has_feature_object.property_id]
+                    == len(features_id_operator_value_list)
+                ]
                 # if not empty returns list else raises an exception
                 if properties_ids_list:
                     return properties_ids_list
@@ -145,10 +156,12 @@ class PropertyHasFeatureService:
                 PropertyService.get_property_by_id(property_id=property_id)
                 TypeOfFeatureService.get_by_id(feature_id=feature_id)
                 property_feature_repo = PropertyHasFeatureRepository(db)
-                if property_feature_repo.get_property_with_feature_by_ids(property_id=property_id,
-                                                                          feature_id=feature_id):
-                    return property_feature_repo.delete_feature_from_property_by_ids(property_id=property_id,
-                                                                                     feature_id=feature_id)
+                if property_feature_repo.get_property_with_feature_by_ids(
+                    property_id=property_id, feature_id=feature_id
+                ):
+                    return property_feature_repo.delete_feature_from_property_by_ids(
+                        property_id=property_id, feature_id=feature_id
+                    )
                 raise PropertyDoesntHaveRequestedFeatureException
         except Exception as exc:
             raise exc

@@ -1,6 +1,7 @@
 """Client repository layer"""
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+
 from app.users.exceptions import ClientIdDoesntExistException
 from app.users.models import Client
 

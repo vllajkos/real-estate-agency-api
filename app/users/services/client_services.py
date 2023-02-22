@@ -1,7 +1,10 @@
 """Client service layer"""
 from app.db.database import SessionLocal
-from app.users.exceptions import ClientExistWithProvidedUserIdException, ClientIdDoesntExistException, \
-    ClientDoesntExistForProvidedUserIdException
+from app.users.exceptions import (
+    ClientDoesntExistForProvidedUserIdException,
+    ClientExistWithProvidedUserIdException,
+    ClientIdDoesntExistException,
+)
 from app.users.models import Client
 from app.users.repositories import ClientRepository
 from app.users.services import UserService
@@ -21,9 +24,9 @@ class ClientService:
                     client_repository = ClientRepository(db)
                     if client_repository.get_client_by_user_id(user_id=user_id):
                         raise ClientExistWithProvidedUserIdException
-                    return client_repository.create_client(first_name=first_name,
-                                                           last_name=last_name,
-                                                           phone_number=phone_number, user_id=user_id)
+                    return client_repository.create_client(
+                        first_name=first_name, last_name=last_name, phone_number=phone_number, user_id=user_id
+                    )
             except Exception as exc:
                 raise exc
 
@@ -69,8 +72,7 @@ class ClientService:
             try:
                 client_repository = ClientRepository(db)
                 if client_repository.get_client_by_id(client_id=client_id):
-                    return client_repository.update_client_phone_number(client_id=client_id,
-                                                                        phone_number=phone_number)
+                    return client_repository.update_client_phone_number(client_id=client_id, phone_number=phone_number)
                 raise ClientIdDoesntExistException
             except Exception as exc:
                 raise exc

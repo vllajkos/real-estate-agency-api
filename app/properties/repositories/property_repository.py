@@ -3,22 +3,31 @@ It's a class that contains methods for CRUD operations on the Property model
 """
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from app.properties.exceptions import PropertyNotFoundException, MinMaxSquareMetersException
+
+from app.properties.exceptions import MinMaxSquareMetersException, PropertyNotFoundException
 from app.properties.models import Property
 
 
 class PropertyRepository:
     """Class that contains methods for CRUD operations on the Property model using while connecting to database"""
+
     def __init__(self, db: Session) -> None:
         """Repository object"""
         self.db = db
 
-    def create(self, street: str, municipality: str, city: str, country: str, square_meters: float,
-               type_of_property_id: str) -> Property:
+    def create(
+        self, street: str, municipality: str, city: str, country: str, square_meters: float, type_of_property_id: str
+    ) -> Property:
         """Creates property"""
         try:
-            property_ = Property(street=street, municipality=municipality, city=city, country=country,
-                                 square_meters=square_meters, type_of_property_id=type_of_property_id)
+            property_ = Property(
+                street=street,
+                municipality=municipality,
+                city=city,
+                country=country,
+                square_meters=square_meters,
+                type_of_property_id=type_of_property_id,
+            )
             self.db.add(property_)
             self.db.commit()
             self.db.refresh(property_)
@@ -52,9 +61,15 @@ class PropertyRepository:
         """
         return self.db.query(Property).filter(Property.city.ilike(f"%{city}%")).all()
 
-    def get_properties_by_filter_parameters(self, municipality: str, city: str, country: str,
-                                            min_square_meters: float, max_square_meters: float,
-                                            type_of_property_id: str) -> list:
+    def get_properties_by_filter_parameters(
+        self,
+        municipality: str,
+        city: str,
+        country: str,
+        min_square_meters: float,
+        max_square_meters: float,
+        type_of_property_id: str,
+    ) -> list:
         """It returns all properties that match the given filter parameters"""
         # returns for all none variables filtered properties by filter parameters
         query = self.db.query(Property)
@@ -77,9 +92,15 @@ class PropertyRepository:
             query = query.filter(Property.type_of_property_id == type_of_property_id)
         return query.all()
 
-    def get_properties_ids_by_filter_parameters(self, municipality: str, city: str, country: str,
-                                                min_square_meters: float, max_square_meters: float,
-                                                type_of_property_id: str) -> list:
+    def get_properties_ids_by_filter_parameters(
+        self,
+        municipality: str,
+        city: str,
+        country: str,
+        min_square_meters: float,
+        max_square_meters: float,
+        type_of_property_id: str,
+    ) -> list:
         """Returns properties ids by search parameters"""
         # returns for all not none parameters filtered property's ids by those parameters as single tuple list
         # of properties ids

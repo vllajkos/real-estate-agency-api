@@ -1,8 +1,9 @@
 """
 Model representing which type of property can contain which type of feature
 """
-from sqlalchemy import Column, String, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, ForeignKey, PrimaryKeyConstraint, String
 from sqlalchemy.orm import relationship
+
 from app.db import Base
 
 

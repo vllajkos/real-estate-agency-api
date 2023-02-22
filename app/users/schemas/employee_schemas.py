@@ -1,5 +1,6 @@
 """Employee schemas"""
 from pydantic import BaseModel, StrictStr
+
 from app.users.schemas import UserSchemaOut
 
 

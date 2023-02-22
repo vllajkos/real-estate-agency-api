@@ -1,8 +1,11 @@
 """Type of feature service layer"""
 
 from app.db import SessionLocal
-from app.properties.exceptions import TypeOfFeatureExistsException, TypeOfFeatureDoesntExistException, \
-    TypeOfPropertyDoesntHaveFeaturesException
+from app.properties.exceptions import (
+    TypeOfFeatureDoesntExistException,
+    TypeOfFeatureExistsException,
+    TypeOfPropertyDoesntHaveFeaturesException,
+)
 from app.properties.models import TypeOfFeature
 from app.properties.repositories import TypeOfFeatureRepository
 from app.properties.services import TypeOfPropertyService

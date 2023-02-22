@@ -1,10 +1,13 @@
 """ Service layer for types of properties have types of features"""
 from app.db import SessionLocal
-from app.properties.exceptions import TypeOfPropertyHasFeatureExistsException, \
-    TypeOfPropertyDoesntHaveFeaturesException, TypeOfPropertyDoesntSupportFeatureException
+from app.properties.exceptions import (
+    TypeOfPropertyDoesntHaveFeaturesException,
+    TypeOfPropertyDoesntSupportFeatureException,
+    TypeOfPropertyHasFeatureExistsException,
+)
 from app.properties.models import TypeOfPropertyHasFeature
 from app.properties.repositories import TypeOfPropertyHasFeatureRepository
-from app.properties.services import TypeOfPropertyService, TypeOfFeatureService
+from app.properties.services import TypeOfFeatureService, TypeOfPropertyService
 
 
 class TypeOfPropertyHasFeatureService:
@@ -22,9 +25,9 @@ class TypeOfPropertyHasFeatureService:
                 property_feature_repo = TypeOfPropertyHasFeatureRepository(db)
 
                 if not property_feature_repo.get_type_of_property_and_type_of_feature_by_ids(
-                        type_of_property_id=type_of_property_id, feature_id=feature_id):
-                    return property_feature_repo.create(type_of_property_id=type_of_property_id,
-                                                        feature_id=feature_id)
+                    type_of_property_id=type_of_property_id, feature_id=feature_id
+                ):
+                    return property_feature_repo.create(type_of_property_id=type_of_property_id, feature_id=feature_id)
                 raise TypeOfPropertyHasFeatureExistsException
         except Exception as exc:
             raise exc
@@ -51,21 +54,24 @@ class TypeOfPropertyHasFeatureService:
             TypeOfPropertyService.get_by_id(type_id=type_of_property_id)
             property_feature_repo = TypeOfPropertyHasFeatureRepository(db)
             features = property_feature_repo.get_type_of_property_with_features_by_optional_values(
-                type_of_property_id=type_of_property_id, optional_values=optional_values)
+                type_of_property_id=type_of_property_id, optional_values=optional_values
+            )
             if features:
                 return features
             raise TypeOfPropertyDoesntHaveFeaturesException
 
     @staticmethod
-    def get_type_of_property_and_type_of_feature_by_ids(type_of_property_id: str,
-                                                        feature_id: str) -> TypeOfPropertyHasFeature:
+    def get_type_of_property_and_type_of_feature_by_ids(
+        type_of_property_id: str, feature_id: str
+    ) -> TypeOfPropertyHasFeature:
         """
         It gets a type of property and a feature by their ids
         """
         with SessionLocal() as db:
             property_feature_repo = TypeOfPropertyHasFeatureRepository(db)
             property_feature = property_feature_repo.get_type_of_property_and_type_of_feature_by_ids(
-                type_of_property_id=type_of_property_id, feature_id=feature_id)
+                type_of_property_id=type_of_property_id, feature_id=feature_id
+            )
             if property_feature:
                 return property_feature
             raise TypeOfPropertyDoesntSupportFeatureException
@@ -81,7 +87,8 @@ class TypeOfPropertyHasFeatureService:
                 TypeOfFeatureService.get_by_id(feature_id=feature_id)
                 property_feature_repo = TypeOfPropertyHasFeatureRepository(db)
                 if property_feature_repo.get_type_of_property_and_type_of_feature_by_ids(
-                        type_of_property_id=type_of_property_id, feature_id=feature_id):
+                    type_of_property_id=type_of_property_id, feature_id=feature_id
+                ):
                     return property_feature_repo.delete(type_of_property_id=type_of_property_id, feature_id=feature_id)
                 raise TypeOfPropertyDoesntSupportFeatureException
         except Exception as exc:

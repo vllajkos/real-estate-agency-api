@@ -1,18 +1,20 @@
 """User repository layer"""
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from app.users.exceptions import UserIdDoesntExistException, CannotDeleteInUseException
+
+from app.users.exceptions import CannotDeleteInUseException, UserIdDoesntExistException
 from app.users.models import User
 
 
 class UserRepository:
     """This class is responsible for retrieving users from the database"""
+
     def __init__(self, db: Session) -> None:
         """Repository object"""
         self.db = db
 
     def create_user(self, username: str, email: str, password: str) -> User:
-        """ Creates user"""
+        """Creates user"""
         try:
             user = User(username=username, email=email, password=password)
             self.db.add(user)
@@ -49,8 +51,9 @@ class UserRepository:
         """
         It returns the first user that matches the username or email
         """
-        return self.db.query(User).filter(
-            (User.email == username_or_email) | (User.username == username_or_email)).first()
+        return (
+            self.db.query(User).filter((User.email == username_or_email) | (User.username == username_or_email)).first()
+        )
 
     def get_user_by_id(self, user_id: str) -> User | None:
         """

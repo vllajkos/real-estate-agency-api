@@ -1,12 +1,14 @@
 """Repository layer for managing type of property with connection to database"""
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from app.properties.exceptions import TypeOfPropertyDoesntExistException, TypeOfPropertyDeleteException
+
+from app.properties.exceptions import TypeOfPropertyDeleteException, TypeOfPropertyDoesntExistException
 from app.properties.models import TypeOfProperty
 
 
 class TypeOfPropertyRepository:
     """This class is a repository for the TypeOfProperty class."""
+
     def __init__(self, db: Session) -> None:
         """
         Session object

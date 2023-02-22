@@ -1,6 +1,7 @@
 """Client controller layer"""
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
+
 from app.users.exceptions import CustomUserException
 from app.users.models import Client
 from app.users.services import ClientService
@@ -15,8 +16,9 @@ class ClientController:
         It creates a client
         """
         try:
-            return ClientService.create_client(first_name=first_name, last_name=last_name, phone_number=phone_number,
-                                               user_id=user_id)
+            return ClientService.create_client(
+                first_name=first_name, last_name=last_name, phone_number=phone_number, user_id=user_id
+            )
         except CustomUserException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:

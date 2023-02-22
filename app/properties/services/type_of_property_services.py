@@ -1,6 +1,6 @@
 """ Service layer for types of properties"""
 from app.db import SessionLocal
-from app.properties.exceptions import TypeOfPropertyExistsException, TypeOfPropertyDoesntExistException
+from app.properties.exceptions import TypeOfPropertyDoesntExistException, TypeOfPropertyExistsException
 from app.properties.models import TypeOfProperty
 from app.properties.repositories import TypeOfPropertyRepository
 

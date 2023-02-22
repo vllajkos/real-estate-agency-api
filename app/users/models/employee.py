@@ -1,13 +1,16 @@
 """Model of an Employee"""
 
 from uuid import uuid4
-from sqlalchemy import Column, String, ForeignKey
+
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import relationship
+
 from app.db import Base
 
 
 class Employee(Base):
     """Defining a table for employees"""
+
     __tablename__ = "employees"
     id = Column(String(36), primary_key=True, default=uuid4)
     first_name = Column(String(30), nullable=False)
@@ -16,7 +19,7 @@ class Employee(Base):
     phone_number = Column(String(50), nullable=False)
 
     user_id = Column(String(36), ForeignKey("users.id"), unique=True)
-    user = relationship("User", lazy='subquery')
+    user = relationship("User", lazy="subquery")
 
     def __init__(self, first_name: str, last_name: str, job_title: str, phone_number: str, user_id: str) -> None:
         """Model of an Employee object"""

@@ -1,5 +1,6 @@
 """Follow schemas"""
 from pydantic import BaseModel
+
 from app.advertisements.schemas import AdvertisementSchemaOut
 from app.users.schemas import ClientSchemaOut
 

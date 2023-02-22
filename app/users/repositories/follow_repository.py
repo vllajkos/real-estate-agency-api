@@ -1,6 +1,7 @@
 """Follow Repository layer"""
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+
 from app.users.exceptions import FollowDoesntExistException
 from app.users.models import Follow
 
@@ -43,16 +44,18 @@ class FollowRepository:
         It returns the first row from the Follow table where the client_id
         and advertisement_id match the given parameters
         """
-        return self.db.query(Follow).filter((Follow.client_id == client_id) &
-                                            (Follow.advertisement_id == advertisement_id)).first()
+        return (
+            self.db.query(Follow)
+            .filter((Follow.client_id == client_id) & (Follow.advertisement_id == advertisement_id))
+            .first()
+        )
 
     def delete(self, client_id: str, advertisement_id: str) -> None:
         """
         Unfollows ad by user by removing it from the database if it exists, otherwise it raises an exception
         """
         try:
-            follow = self.get_by_client_id_and_advertisement_id(client_id=client_id,
-                                                                advertisement_id=advertisement_id)
+            follow = self.get_by_client_id_and_advertisement_id(client_id=client_id, advertisement_id=advertisement_id)
             if follow:
                 self.db.delete(follow)
                 self.db.commit()

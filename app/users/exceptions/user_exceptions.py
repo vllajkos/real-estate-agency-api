@@ -29,5 +29,7 @@ class InvalidLoginInfoException(CustomUserException):
 
 class CannotDeleteInUseException(CustomUserException):
     status_code = 400
-    message = "User has been posting ads, so his deletion would compromise data integrity in your database," \
-              "it would be wiser to deactivate his account instead."
+    message = (
+        "User has been posting ads, so his deletion would compromise data integrity in your database,"
+        "it would be wiser to deactivate his account instead."
+    )

@@ -1,3 +1,1 @@
-from .routes import user_router
-from .routes import client_router
-from .routes import employee_router
+from .routes import client_router, employee_router, user_router

@@ -1,14 +1,17 @@
 """Model of an Advertisement"""
 from datetime import date
 from uuid import uuid4
-from sqlalchemy import Column, String, Float, ForeignKey, Date, Text
+
+from sqlalchemy import Column, Date, Float, ForeignKey, String, Text
 from sqlalchemy.orm import relationship
+
 from app.advertisements.models.hardcoded_data import AdStatus
 from app.db import Base
 
 
 class Advertisement(Base):
     """Defining a table for advertisements"""
+
     __tablename__ = "advertisements"
     id = Column(String(50), primary_key=True, default=uuid4)
     type_of_ad = Column(String(20), nullable=False)
@@ -25,9 +28,18 @@ class Advertisement(Base):
     property = relationship("Property", lazy="subquery")
     client = relationship("Client", lazy="subquery")
 
-    def __init__(self, type_of_ad: str, price: float, description: str, property_id: str,
-                 client_id: str, employee_id: str, admission_date: date = date.today(),
-                 status_date: date = date.today(), status: AdStatus = AdStatus.PENDING.value):
+    def __init__(
+        self,
+        type_of_ad: str,
+        price: float,
+        description: str,
+        property_id: str,
+        client_id: str,
+        employee_id: str,
+        admission_date: date = date.today(),
+        status_date: date = date.today(),
+        status: AdStatus = AdStatus.PENDING.value,
+    ):
         """Model of an Advertisement object"""
         self.type_of_ad = type_of_ad
         self.price = price

@@ -1,5 +1,6 @@
 """Client schemas"""
 from pydantic import BaseModel, StrictStr
+
 from app.users.schemas.user_schemas import UserSchemaOut
 
 

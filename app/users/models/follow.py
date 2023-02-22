@@ -1,11 +1,13 @@
 """Model of a Follow class which represents clients desires towards certain ads"""
-from sqlalchemy import Column, String, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, ForeignKey, PrimaryKeyConstraint, String
 from sqlalchemy.orm import relationship
+
 from app.db import Base
 
 
 class Follow(Base):
     """Defining a table for follows"""
+
     __tablename__ = "follows"
     client_id = Column(String(36), ForeignKey("clients.id"), primary_key=True)
     advertisement_id = Column(String(36), ForeignKey("advertisements.id"), primary_key=True)

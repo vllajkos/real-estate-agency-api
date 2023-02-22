@@ -2,6 +2,7 @@
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+
 from app.users.exceptions import EmployeeIdDoesntExistException
 from app.users.models import Employee, User
 
@@ -13,14 +14,20 @@ class EmployeeRepository:
         """Repository object"""
         self.db = db
 
-    def create_employee(self, first_name: str, last_name: str, job_title: str, phone_number: str,
-                        user_id: str) -> Employee:
+    def create_employee(
+        self, first_name: str, last_name: str, job_title: str, phone_number: str, user_id: str
+    ) -> Employee:
         """
         It creates an employee object and adds it to the database
         """
         try:
-            employee = Employee(first_name=first_name, last_name=last_name, job_title=job_title,
-                                phone_number=phone_number, user_id=user_id)
+            employee = Employee(
+                first_name=first_name,
+                last_name=last_name,
+                job_title=job_title,
+                phone_number=phone_number,
+                user_id=user_id,
+            )
             self.db.add(employee)
             self.db.commit()
             self.db.refresh(employee)

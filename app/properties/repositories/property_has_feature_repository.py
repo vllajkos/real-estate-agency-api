@@ -3,6 +3,7 @@ Repository layer for concrete property having features
 """
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+
 from app.properties.exceptions import PropertyDoesntHaveRequestedFeatureException
 from app.properties.models import PropertyHasFeature
 
@@ -20,8 +21,9 @@ class PropertyHasFeatureRepository:
         additional_feature_value
         """
         try:
-            property_feature = PropertyHasFeature(property_id=property_id, feature_id=feature_id,
-                                                  additional_feature_value=additional_feature_value)
+            property_feature = PropertyHasFeature(
+                property_id=property_id, feature_id=feature_id, additional_feature_value=additional_feature_value
+            )
             self.db.add(property_feature)
             self.db.commit()
             self.db.refresh(property_feature)
@@ -33,8 +35,11 @@ class PropertyHasFeatureRepository:
         """
         Get the property with feature by ids
         """
-        return self.db.query(PropertyHasFeature).filter((PropertyHasFeature.property_id == property_id) &
-                                                        (PropertyHasFeature.feature_id == feature_id)).first()
+        return (
+            self.db.query(PropertyHasFeature)
+            .filter((PropertyHasFeature.property_id == property_id) & (PropertyHasFeature.feature_id == feature_id))
+            .first()
+        )
 
     def get_all_features_for_property_by_id(self, property_id: str) -> list:
         """
@@ -48,12 +53,15 @@ class PropertyHasFeatureRepository:
         features_id_list
         """
         # returns filtered property's ids by filter parameters as single element tuple list
-        return self.db.query(PropertyHasFeature.property_id).filter(
-            PropertyHasFeature.feature_id.in_(features_id_list)).all()
+        return (
+            self.db.query(PropertyHasFeature.property_id)
+            .filter(PropertyHasFeature.feature_id.in_(features_id_list))
+            .all()
+        )
 
     def get_properties_by_features_list(self, features_id_list: list) -> list:
         """
-         It returns a list of all the properties that have at least one of the features in the features_id_list
+        It returns a list of all the properties that have at least one of the features in the features_id_list
         """
         return self.db.query(PropertyHasFeature).filter(PropertyHasFeature.feature_id.in_(features_id_list)).all()
 

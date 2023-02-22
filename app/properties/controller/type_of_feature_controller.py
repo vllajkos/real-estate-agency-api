@@ -1,14 +1,21 @@
 """Type of feature controller layer"""
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
-from app.properties.exceptions import TypeOfFeatureExistsException, TypeOfFeatureDoesntExistException, \
-    TypeOfPropertyDoesntExistException, TypeOfPropertyDoesntHaveFeaturesException, CustomPropertyException
+
+from app.properties.exceptions import (
+    CustomPropertyException,
+    TypeOfFeatureDoesntExistException,
+    TypeOfFeatureExistsException,
+    TypeOfPropertyDoesntExistException,
+    TypeOfPropertyDoesntHaveFeaturesException,
+)
 from app.properties.models import TypeOfFeature
 from app.properties.services import TypeOfFeatureService
 
 
 class TypeOfFeatureController:
     """Class containing Type of feature controller methods"""
+
     @staticmethod
     def create(feature: str, optional_values: bool) -> TypeOfFeature:
         """

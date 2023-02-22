@@ -1,20 +1,17 @@
 """ User auth handler service"""
 import time
 from typing import Dict
-import jwt
-from app.config import settings
 
+import jwt
+
+from app.config import settings
 
 USER_SECRET = settings.USER_SECRET
 JWT_ALGORITHM = settings.ALGORITHM
 
 
 def signJWT(user_id: str, role: str) -> Dict[str, str]:
-    payload = {
-        "user_id": user_id,
-        "role": role,
-        "expires": time.time() + 1200
-    }
+    payload = {"user_id": user_id, "role": role, "expires": time.time() + 1200}
 
     token = jwt.encode(payload, USER_SECRET, algorithm=JWT_ALGORITHM)
 

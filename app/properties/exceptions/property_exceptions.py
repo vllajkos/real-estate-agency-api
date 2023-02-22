@@ -31,6 +31,7 @@ class PropertiesNotFoundByFilterParametersException(CustomPropertyException):
     status_code = 400
     message = "Properties not found for filter parameters"
 
+
 class NoPropertyException(CustomPropertyException):
     status_code = 400
     message = "Properties doesnt "

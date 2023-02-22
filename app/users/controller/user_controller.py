@@ -1,6 +1,7 @@
 """User controller layer"""
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
+
 from app.users.exceptions import CustomUserException
 from app.users.models import User
 from app.users.services import UserService, signJWT

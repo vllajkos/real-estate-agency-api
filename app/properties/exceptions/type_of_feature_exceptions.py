@@ -19,8 +19,10 @@ class TypeOfFeatureDoesntSupportAdditionalValueException(CustomPropertyException
 
 class TypeOfFeatureDeleteException(CustomPropertyException):
     status_code = 400
-    message = "Deletion is available only after creation of type of feature if you made some kind" \
-              "of mistake and before type of feature is being used. It is advised" \
-              "not to delete it after use because it will corrupt data integrity of your database." \
-              "You can unlink chosen type of feature from available types of properties so it won't be available " \
-              "anymore."
+    message = (
+        "Deletion is available only after creation of type of feature if you made some kind"
+        "of mistake and before type of feature is being used. It is advised"
+        "not to delete it after use because it will corrupt data integrity of your database."
+        "You can unlink chosen type of feature from available types of properties so it won't be available "
+        "anymore."
+    )

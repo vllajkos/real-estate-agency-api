@@ -1,7 +1,11 @@
 """Employee service layer"""
 from app.db.database import SessionLocal
-from app.users.exceptions import EmployeeExistWithProvidedUserIdException, NoEmployeesYetException, \
-    EmployeeDoesntExistforProvidedUserIdException, EmployeeIdDoesntExistException
+from app.users.exceptions import (
+    EmployeeDoesntExistforProvidedUserIdException,
+    EmployeeExistWithProvidedUserIdException,
+    EmployeeIdDoesntExistException,
+    NoEmployeesYetException,
+)
 from app.users.models import Employee
 from app.users.repositories import EmployeeRepository
 from app.users.services import UserService
@@ -21,9 +25,13 @@ class EmployeeService:
                     employee_repository = EmployeeRepository(db)
                     if employee_repository.get_employee_by_user_id(user_id=user_id):
                         raise EmployeeExistWithProvidedUserIdException
-                    return employee_repository.create_employee(first_name=first_name, last_name=last_name,
-                                                               job_title=job_title, phone_number=phone_number,
-                                                               user_id=user_id)
+                    return employee_repository.create_employee(
+                        first_name=first_name,
+                        last_name=last_name,
+                        job_title=job_title,
+                        phone_number=phone_number,
+                        user_id=user_id,
+                    )
         except Exception as exc:
             raise exc
 
@@ -70,7 +78,7 @@ class EmployeeService:
     @staticmethod
     def get_all_employees() -> list:
         """
-         Gets all employees
+        Gets all employees
         """
         with SessionLocal() as db:
             employee_repository = EmployeeRepository(db)
@@ -85,8 +93,9 @@ class EmployeeService:
             try:
                 employee_repository = EmployeeRepository(db)
                 if employee_repository.get_employee_by_id(employee_id=employee_id):
-                    return employee_repository.update_employee_phone_number(employee_id=employee_id,
-                                                                            phone_number=phone_number)
+                    return employee_repository.update_employee_phone_number(
+                        employee_id=employee_id, phone_number=phone_number
+                    )
                 raise EmployeeIdDoesntExistException
             except Exception as exc:
                 raise exc
@@ -100,8 +109,7 @@ class EmployeeService:
             try:
                 employee_repository = EmployeeRepository(db)
                 if employee_repository.get_employee_by_id(employee_id=employee_id):
-                    return employee_repository.update_employee_job_title(employee_id=employee_id,
-                                                                         job_title=job_title)
+                    return employee_repository.update_employee_job_title(employee_id=employee_id, job_title=job_title)
                 raise EmployeeIdDoesntExistException
             except Exception as exc:
                 raise exc
