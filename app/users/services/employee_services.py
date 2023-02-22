@@ -1,16 +1,19 @@
+"""Employee service layer"""
 from app.db.database import SessionLocal
 from app.users.exceptions import EmployeeExistWithProvidedUserIdException, NoEmployeesYetException, \
     EmployeeDoesntExistforProvidedUserIdException, EmployeeIdDoesntExistException
-
-
+from app.users.models import Employee
 from app.users.repositories import EmployeeRepository
-
 from app.users.services import UserService
 
 
 class EmployeeService:
+    """Class containing employee service layer methods"""
     @staticmethod
-    def create_employee(first_name: str, last_name: str, job_title: str, phone_number: str, user_id: str):
+    def create_employee(first_name: str, last_name: str, job_title: str, phone_number: str, user_id: str) -> Employee:
+        """
+        It creates an employee if the user_id provided is valid and the employee doesn't exist
+        """
         try:
             with SessionLocal() as db:
                 if UserService.get_user_by_id(user_id=user_id):
@@ -24,7 +27,11 @@ class EmployeeService:
             raise exc
 
     @staticmethod
-    def get_random_employee():
+    def get_random_employee() -> Employee:
+        """
+        It gets a random employee from the database
+        """
+        # used when user creates ad it signs ad to an active employee
         try:
             with SessionLocal() as db:
                 employee_repository = EmployeeRepository(db)
@@ -36,7 +43,10 @@ class EmployeeService:
             raise exc
 
     @staticmethod
-    def get_employee_by_user_id(user_id: str):
+    def get_employee_by_user_id(user_id: str) -> Employee:
+        """
+        It gets an employee by user id
+        """
         with SessionLocal() as db:
             employee_repository = EmployeeRepository(db)
             employee = employee_repository.get_employee_by_user_id(user_id=user_id)
@@ -45,7 +55,10 @@ class EmployeeService:
             raise EmployeeDoesntExistforProvidedUserIdException
 
     @staticmethod
-    def get_employee_by_id(employee_id: str):
+    def get_employee_by_id(employee_id: str) -> Employee:
+        """
+        It gets an employee by id
+        """
         with SessionLocal() as db:
             employee_repository = EmployeeRepository(db)
             employee = employee_repository.get_employee_by_id(employee_id=employee_id)
@@ -54,13 +67,19 @@ class EmployeeService:
             raise EmployeeIdDoesntExistException
 
     @staticmethod
-    def get_all_employees():
+    def get_all_employees() -> list:
+        """
+         Gets all employees
+        """
         with SessionLocal() as db:
             employee_repository = EmployeeRepository(db)
             return employee_repository.get_all_employees()
 
     @staticmethod
-    def delete(employee_id: str):
+    def delete(employee_id: str) -> None:
+        """
+        It deletes an employee from the database if the employee exists
+        """
         try:
             with SessionLocal() as db:
                 employee_repository = EmployeeRepository(db)
@@ -71,7 +90,10 @@ class EmployeeService:
             raise exc
 
     @staticmethod
-    def update_employee_phone_number(employee_id: str, phone_number: str):
+    def update_employee_phone_number(employee_id: str, phone_number: str) -> Employee:
+        """
+        It updates the phone number of an employee with the given employee id
+        """
         with SessionLocal() as db:
             try:
                 employee_repository = EmployeeRepository(db)
@@ -83,7 +105,10 @@ class EmployeeService:
                 raise exc
 
     @staticmethod
-    def update_employee_job_title(employee_id: str, job_title: str):
+    def update_employee_job_title(employee_id: str, job_title: str) -> Employee:
+        """
+        It updates the job title of an employee with the given employee id
+        """
         with SessionLocal() as db:
             try:
                 employee_repository = EmployeeRepository(db)

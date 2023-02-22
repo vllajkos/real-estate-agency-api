@@ -1,7 +1,7 @@
+"""Main app"""
 import uvicorn
 from fastapi import FastAPI
 from starlette.responses import RedirectResponse
-
 from app.advertisements import advertisement_router
 from app.db.database import engine, Base
 from app.properties import type_of_property_router, type_of_feature_router, \

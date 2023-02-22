@@ -1,11 +1,11 @@
-from pydantic import BaseModel
-
+"""Client schemas"""
+from pydantic import BaseModel, StrictStr
 from app.users.schemas.user_schemas import UserSchemaOut
 
 
 class ClientSchemaIn(BaseModel):
-    first_name: str
-    last_name: str
+    first_name: StrictStr
+    last_name: StrictStr
     phone_number: str
     user_id: str
 
@@ -15,8 +15,8 @@ class ClientSchemaIn(BaseModel):
 
 class ClientSchemaOut(BaseModel):
     id: str
-    first_name: str
-    last_name: str
+    first_name: StrictStr
+    last_name: StrictStr
     phone_number: str
     user_id: str
 

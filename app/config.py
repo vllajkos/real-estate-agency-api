@@ -1,3 +1,4 @@
+"""Config"""
 from pydantic import BaseSettings
 
 

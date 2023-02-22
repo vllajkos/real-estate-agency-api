@@ -1,10 +1,6 @@
 """Model of a User"""
 from uuid import uuid4
-
-from pydantic import UUID4
 from sqlalchemy import Column, String, Boolean
-from sqlalchemy.orm import relationship
-
 from app.db import Base
 
 
@@ -18,7 +14,8 @@ class User(Base):
     active_status = Column(Boolean, default=True)
     superuser = Column(Boolean, default=False)
 
-    def __init__(self, username: str, email: str, password: str, active_status: bool = True, superuser: bool = False):
+    def __init__(self, username: str, email: str, password: str, active_status: bool = True,
+                 superuser: bool = False) -> None:
         """Model of a User object"""
         self.username = username
         self.email = email

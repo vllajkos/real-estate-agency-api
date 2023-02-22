@@ -1,3 +1,4 @@
+""" User auth handler service"""
 import time
 from typing import Dict
 import jwt

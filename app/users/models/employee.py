@@ -18,7 +18,7 @@ class Employee(Base):
     user_id = Column(String(36), ForeignKey("users.id"), unique=True)
     user = relationship("User", lazy='subquery')
 
-    def __init__(self, first_name: str, last_name: str, job_title: str, phone_number: str, user_id: str):
+    def __init__(self, first_name: str, last_name: str, job_title: str, phone_number: str, user_id: str) -> None:
         """Model of an Employee object"""
         self.first_name = first_name
         self.last_name = last_name

@@ -19,7 +19,7 @@ class AdvertisementSchemaIn(BaseModel):
 class AdvertisementSchemaOut(BaseModel):
     id: str
     type_of_ad: str
-    price: float
+    price: PositiveFloat
     description: str
     admission_date: date
     status_date: Optional[date]

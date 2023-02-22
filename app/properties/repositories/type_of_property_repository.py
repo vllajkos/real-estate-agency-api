@@ -1,7 +1,7 @@
 """Repository layer for managing type of property with connection to database"""
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from app.properties.exceptions import TypeOfPropertyDoesntExistException
+from app.properties.exceptions import TypeOfPropertyDoesntExistException, TypeOfPropertyDeleteException
 from app.properties.models import TypeOfProperty
 
 
@@ -56,5 +56,7 @@ class TypeOfPropertyRepository:
             self.db.delete(type_of_property)
             self.db.commit()
             return True
+        except IntegrityError:
+            raise TypeOfPropertyDeleteException
         except Exception as exc:
             raise exc

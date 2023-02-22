@@ -2,7 +2,7 @@
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
 from app.properties.exceptions import TypeOfFeatureExistsException, TypeOfFeatureDoesntExistException, \
-    TypeOfPropertyDoesntExistException, TypeOfPropertyDoesntHaveFeaturesException
+    TypeOfPropertyDoesntExistException, TypeOfPropertyDoesntHaveFeaturesException, CustomPropertyException
 from app.properties.models import TypeOfFeature
 from app.properties.services import TypeOfFeatureService
 
@@ -71,7 +71,7 @@ class TypeOfFeatureController:
         try:
             TypeOfFeatureService.delete_by_id(feature_id=feature_id)
             return JSONResponse(status_code=200, content="Type of feature deleted")
-        except TypeOfFeatureDoesntExistException as exc:
+        except CustomPropertyException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
-            raise HTTPException(status_code=500, detail=exc)
+            raise HTTPException(status_code=500, detail=exc.__str__())

@@ -1,8 +1,5 @@
-from typing import Optional
-
+"""User schemas"""
 from pydantic import BaseModel, EmailStr
-
-
 
 
 class UserSchemaLogin(BaseModel):

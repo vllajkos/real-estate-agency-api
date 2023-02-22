@@ -1,3 +1,4 @@
+"""User auth controller layer"""
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.users.services import decodeJWT

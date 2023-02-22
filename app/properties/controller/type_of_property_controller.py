@@ -1,7 +1,8 @@
 """Type of property controller layer"""
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
-from app.properties.exceptions import TypeOfPropertyExistsException, TypeOfPropertyDoesntExistException
+from app.properties.exceptions import TypeOfPropertyExistsException, TypeOfPropertyDoesntExistException, \
+    CustomPropertyException
 from app.properties.models import TypeOfProperty
 from app.properties.services import TypeOfPropertyService
 
@@ -58,7 +59,7 @@ class TypeOfPropertyController:
         try:
             TypeOfPropertyService.delete_by_id(type_id=type_id)
             return JSONResponse(status_code=200, content="Type of property deleted")
-        except TypeOfPropertyDoesntExistException as exc:
+        except CustomPropertyException as exc:
             raise HTTPException(status_code=exc.status_code, detail=exc.message)
         except Exception as exc:
-            raise HTTPException(status_code=500, detail=exc)
+            raise HTTPException(status_code=500, detail=exc.__str__())

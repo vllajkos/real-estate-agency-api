@@ -1,3 +1,4 @@
+"""Follow exceptions"""
 from app.users.exceptions.custom_user_exception import CustomUserException
 
 

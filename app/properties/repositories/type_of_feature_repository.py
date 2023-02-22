@@ -1,7 +1,7 @@
 """Repository layer for types of features"""
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from app.properties.exceptions import TypeOfFeatureDoesntExistException
+from app.properties.exceptions import TypeOfFeatureDoesntExistException, TypeOfFeatureDeleteException
 from app.properties.models import TypeOfFeature, TypeOfPropertyHasFeature
 
 
@@ -67,5 +67,7 @@ class TypeOfFeatureRepository:
             self.db.delete(feature)
             self.db.commit()
             return True
+        except IntegrityError:
+            raise TypeOfFeatureDeleteException
         except Exception as exc:
             raise exc
