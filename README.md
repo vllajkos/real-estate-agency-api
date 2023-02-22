@@ -7,6 +7,11 @@ and potential buyers or renters to view available properties and add them to the
 The advertisements would contain detailed information about the property, the owner, and the price,
 and filtering options would be available for ads.
 
+## For settings and username and passwords
+USER_SECRET=secret123
+ALGORITHM=HS256
+U bazi su iste vrednosti za sifre kao sto su korisnicka imena.
+
 ## Quick Guide
 
 ### Type of Property

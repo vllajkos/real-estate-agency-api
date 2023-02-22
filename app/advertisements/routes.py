@@ -151,13 +151,14 @@ def update_pending_status(advertisement_id: str, status: EmployeeAdStatus):
 )
 def get_stats_of_ads_for_user(
     status: AdStatusUserStat,
-    type_of_ad: TypeOfAd = None,
-    type_of_property_id: str = None,
+    type_of_ad: TypeOfAd,
+    type_of_property_id: str,
     city: str = None,
     start_date: str = None,
     end_date: str = None,
 ):
-    """Get stats of ads by given parameters for users"""
+    """Get number of active or sold/rented ads for given parameters with
+    average property price and avg square meter price for users"""
     return AdvertisementController.get_stats(
         type_of_ad=type_of_ad,
         status=status,
@@ -173,13 +174,14 @@ def get_stats_of_ads_for_user(
 )
 def get_stat_on_avg_price_by_city(
     status: AdStatusUserStat,
-    type_of_ad: TypeOfAd = None,
+    type_of_ad: TypeOfAd,
     type_of_property_id: str = None,
     start_date: str = None,
     end_date: str = None,
 ):
     """
-    It gets the stats on average price of square meter for city by search parameters for users
+    It gets the stats on average price of square meter for city for active or sold/rented properties
+    by search parameters for users
     """
     return AdvertisementController.get_stat_on_avg_price_by_city(
         type_of_ad=type_of_ad,
@@ -199,7 +201,8 @@ def get_stats_of_ads(
     start_date: str = None,
     end_date: str = None,
 ):
-    """Get stats of ads by given parameters for employee"""
+    """Get number of ads for given parameters including full range of statuses available to filter from
+    with average property price and avg square meter price for employee"""
     return AdvertisementController.get_stats(
         type_of_ad=type_of_ad,
         status=status,
@@ -221,7 +224,8 @@ def get_stat_on_avg_price_by_city(
     end_date: str = None,
 ):
     """
-    It gets the stats on average price of square meter for city by search parameters for employee
+    With all available statuses to choose from, gets the stats on average price of square meter
+     for city by search parameters for employee
     """
     return AdvertisementController.get_stat_on_avg_price_by_city(
         type_of_ad=type_of_ad,
